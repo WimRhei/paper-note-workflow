@@ -23,7 +23,7 @@ If `pdftotext` or `pdffigures2` is missing, bootstrap the bundled tools:
 powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 ```
 
-The bootstrap script installs wrappers under `.tools\bin` inside this skill directory and prints the PATH entry to add for the current shell. It expects Java for `pdffigures2`; if Java is missing, install a JRE/JDK first, then rerun the script.
+The bootstrap script installs wrappers under `.tools\bin` inside this skill directory and prints the PATH entry to add for the current shell. It uses system Java when available; if Java is missing, it downloads a portable JRE under `.tools\java` and points the `pdffigures2` wrapper at that local runtime.
 
 When this skill is cloned from GitHub, `bootstrap-windows.ps1` tries to infer the repository from `git remote origin` and download `pdffigures2-assembly.jar` from the latest GitHub Release. If the skill was installed without `.git`, pass `-Repo owner/repo` or set `PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL` to a direct jar URL.
 

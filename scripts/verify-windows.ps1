@@ -15,7 +15,15 @@ function Resolve-Tool {
 
 $skillRoot = Split-Path -Parent $PSScriptRoot
 $localBin = Join-Path $skillRoot ".tools\bin"
+$localJava = Join-Path $skillRoot ".tools\java"
 $env:Path = "$localBin;$env:Path"
+
+if (Test-Path -LiteralPath $localJava) {
+  $javaExe = Get-ChildItem -LiteralPath $localJava -Recurse -Filter "java.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+  if ($javaExe) {
+    $env:Path = "$($javaExe.DirectoryName);$env:Path"
+  }
+}
 
 $checks = @(
   @{ Name = "pdftotext"; Required = $true },
@@ -44,7 +52,7 @@ if ($failed.Count -gt 0) {
     Write-Host "Run this from the skill root to install local wrappers:"
     Write-Host "  powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1"
     Write-Host ""
-    Write-Host "If Java is missing, install a JRE/JDK first and rerun verification."
+    Write-Host "If Java is missing, rerun bootstrap; it can install a local portable JRE under .tools\java."
   }
   exit 1
 }

@@ -6,6 +6,7 @@
 
 - `pdftotext`: 通过 Poppler Windows 预编译包提供。
 - `pdffigures2`: 通过本仓库 GitHub Release 中的 `pdffigures2-assembly.jar` 提供。
+- Java: 如果系统没有 Java，bootstrap 会下载 portable JRE 到 `.tools\java`。
 - 本地 wrapper: 安装到 `.tools\bin`，不污染系统目录。
 
 ## Install
@@ -13,7 +14,7 @@
 推荐直接 clone 到 Codex skills 目录：
 
 ```powershell
-git clone https://github.com/WimRhei/paper-note-drafter.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
+git clone https://github.com/<owner>/<repo>.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
 cd "$env:USERPROFILE\.codex\skills\paper-note-drafter"
 ```
 
@@ -39,10 +40,11 @@ powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 
 脚本会：
 
-1. 下载 Poppler Windows release，并生成 `pdftotext.cmd` wrapper。
-2. 从本仓库最新 GitHub Release 下载 `pdffigures2-assembly.jar`。
-3. 生成 `pdffigures2.cmd` wrapper。
-4. 打印当前 PowerShell 会话需要加入的 PATH。
+1. 如果本机已有 `pdftotext`，直接生成 wrapper；否则下载 Poppler Windows release。
+2. 如果本机找不到 `java`，下载 portable JRE 到 `.tools\java`。
+3. 从本仓库最新 GitHub Release 下载 `pdffigures2-assembly.jar`。
+4. 生成 `pdffigures2.cmd` wrapper。
+5. 打印当前 PowerShell 会话需要加入的 PATH。
 
 按脚本输出执行类似下面的命令：
 
@@ -56,11 +58,21 @@ $env:Path = "C:\path\to\paper-note-drafter\.tools\bin;" + $env:Path
 powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
 ```
 
-## Java Requirement
+## Java
 
-`pdffigures2` 需要 Java。若 `verify-windows.ps1` 显示缺少 `java`，请先安装 JRE/JDK，然后重新运行：
+`pdffigures2` 需要 Java，但用户通常不需要手动安装系统 Java。`bootstrap-windows.ps1` 会优先使用系统已有 Java；如果没有，就下载 portable JRE 到 `.tools\java`，并让 `pdffigures2.cmd` 直接调用这个本地 Java。
+
+因此首次 bootstrap 可能需要联网下载三类文件：
+
+- Poppler Windows release
+- portable JRE
+- `pdffigures2-assembly.jar`
+
+如果网络环境不能访问这些下载源，可以预先下载文件，并通过环境变量指定：
 
 ```powershell
+$env:PAPER_NOTE_DRAFTER_POPPLER_ZIP_URL = "https://example.com/poppler-windows.zip"
+$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://example.com/pdffigures2-assembly.jar"
 powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 ```
 
@@ -96,13 +108,13 @@ pdffigures2-assembly.jar
 Windows bootstrap 脚本会自动从最新 release 查找 `pdffigures2*assembly*.jar`。如果 skill 不是通过 git clone 安装，脚本无法从 `git remote origin` 推断仓库名，可以显式传入：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1 -Repo WimRhei/paper-note-drafter
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1 -Repo <owner>/<repo>
 ```
 
 也可以设置直接下载 URL：
 
 ```powershell
-$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://github.com/WimRhei/paper-note-drafter/releases/download/v0.1.0/pdffigures2-assembly.jar"
+$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://github.com/<owner>/<repo>/releases/download/v0.1.0/pdffigures2-assembly.jar"
 powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 ```
 
