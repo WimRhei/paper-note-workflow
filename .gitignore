@@ -1,4 +1,6 @@
 .build/
 .tools/
 dist/
+dist-release/
+.gh-update-*.json
 *.log
