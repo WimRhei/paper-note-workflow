@@ -120,6 +120,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 
 ## Third-party Components
 
+The repository's own skill files, scripts, and documentation are licensed under the MIT License. See [`LICENSE`](LICENSE).
+
 This project is a Codex skill wrapper and workflow. It relies on third-party open-source tools:
 
 | Component | How it is used | Source | License notes |
@@ -129,6 +131,8 @@ This project is a Codex skill wrapper and workflow. It relies on third-party ope
 | Eclipse Temurin | Provides a portable JRE when no local Java runtime is found. | <https://projects.eclipse.org/projects/adoptium.temurin> | Temurin is distributed under multiple open-source licenses. Specific license and NOTICE files are provided with the downloaded runtime binaries. |
 
 This repository is not affiliated with Allen Institute for AI, Poppler, conda-forge, oschwartz10612/poppler-windows, Eclipse Foundation, or Adoptium. Users are responsible for complying with the licenses of third-party components they download, build, redistribute, or use.
+
+See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for more detailed third-party notes and included license references.
 
 ## Maintainer Notes
 
