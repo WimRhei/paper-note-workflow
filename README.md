@@ -14,7 +14,7 @@
 推荐直接 clone 到 Codex skills 目录：
 
 ```powershell
-git clone https://github.com/<owner>/<repo>.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
+git clone https://github.com/WimRhei/paper-note-drafter.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
 cd "$env:USERPROFILE\.codex\skills\paper-note-drafter"
 ```
 
@@ -108,13 +108,13 @@ pdffigures2-assembly.jar
 Windows bootstrap 脚本会自动从最新 release 查找 `pdffigures2*assembly*.jar`。如果 skill 不是通过 git clone 安装，脚本无法从 `git remote origin` 推断仓库名，可以显式传入：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1 -Repo <owner>/<repo>
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1 -Repo WimRhei/paper-note-drafter
 ```
 
 也可以设置直接下载 URL：
 
 ```powershell
-$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://github.com/<owner>/<repo>/releases/latest/download/pdffigures2-assembly.jar"
+$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://github.com/WimRhei/paper-note-drafter/releases/latest/download/pdffigures2-assembly.jar"
 powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 ```
 
