@@ -9,6 +9,24 @@ description: Draft structured Chinese research paper notes from PDFs. Use when t
 
 Turn a paper PDF into a reviewable Chinese Markdown note that can be archived by the local Obsidian `paper-archiver` plugin. Extract plain text first, infer which figures and tables matter from the text, extract figures/tables separately, then cross-check the note against both sources. Do not mirror the paper's narrative; compress it into the paper's real problem, bottleneck, mechanism, and trade-off.
 
+## Windows Tool Setup
+
+On Windows, verify the local toolchain before processing a PDF:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
+```
+
+If `pdftotext` or `pdffigures2` is missing, bootstrap the bundled tools:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
+```
+
+The bootstrap script installs wrappers under `.tools\bin` inside this skill directory and prints the PATH entry to add for the current shell. It uses system Java when available; if Java is missing, it downloads a portable JRE under `.tools\java` and points the `pdffigures2` wrapper at that local runtime.
+
+When this skill is cloned from GitHub, `bootstrap-windows.ps1` tries to infer the repository from `git remote origin` and download `pdffigures2-assembly.jar` from the latest GitHub Release. If the skill was installed without `.git`, pass `-Repo owner/repo` or set `PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL` to a direct jar URL.
+
 ## Obsidian Archiver Contract
 
 The final output must satisfy the local `paper-archiver` plugin's scan and archive format:
@@ -32,6 +50,7 @@ Run the tools as separate steps.
    - Prepare the final folder shape: `03-论文阅读/Inbox/xxx/xxx.md`, `03-论文阅读/Inbox/xxx/xxx.pdf`, and `03-论文阅读/Inbox/xxx/Figure/`.
 2. Extract text with `pdftotext`.
    - Prefer plain text for reading and reasoning.
+   - On Windows, run `.\scripts\verify-windows.ps1` first if tool availability is uncertain.
    - Example: `pdftotext paper.pdf paper.txt`
 3. Read the extracted text.
    - Identify the paper type and main sections.
