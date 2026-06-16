@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Note Drafter"
+  short_description: "Draft schema-based research paper notes from PDFs."
+  default_prompt: "Draft a structured Chinese paper note from this PDF using the paper note schema."
