@@ -73,16 +73,19 @@ powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
 
 核心流程：
 
-1. 用 `pdftotext` 抽取正文。
+1. 用 `pdftotext` 抽取正文到 `Inbox/xxx/xxx.txt`。
 2. 阅读正文，识别论文主线、机制和图表引用。
-3. 用 `pdffigures2 --dpi 600` 抽取图表。
-4. 按 `references/paper-note-schema.md` 和 `references/paper-note-template.md` 生成中文 Markdown。
-5. 只嵌入关键图表，缺失图表用 `FIX: 手工嵌入 Figure/Table N` 标记。
+3. 用 `pdffigures2 --dpi 600` 临时抽取图表到 `Inbox/xxx/pdffigures2/`。
+4. 用 `xxx.txt` 和 `pdffigures2/data-xxx.json` 对照检查图表是否提取完整。
+5. 只把正文引用的关键图表复制到 `Inbox/xxx/Figure/xxx-N.ext`，缺失图表用 `FIX: 手工嵌入 Figure/Table N` 标记。
+6. 按 `references/paper-note-schema.md` 和 `references/paper-note-template.md` 生成中文 Markdown。
+7. 删除临时 `Inbox/xxx/pdffigures2/`，最终不保留 raw crops、metadata 或 stats。
 
 输出约定：
 
 - 笔记路径：`03-论文阅读/Inbox/xxx/xxx.md`
 - PDF 路径：`03-论文阅读/Inbox/xxx/xxx.pdf`
+- 文本路径：`03-论文阅读/Inbox/xxx/xxx.txt`
 - 图表路径：`03-论文阅读/Inbox/xxx/Figure/xxx-N.ext`
 
 ## Release Asset

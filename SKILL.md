@@ -43,6 +43,21 @@ When this skill is cloned from GitHub, `bootstrap-windows.ps1` tries to infer th
 
 The final note must satisfy the local Obsidian `paper-archiver` format. Do not restate the rules from memory; read and follow `references/paper-note-template.md` for folder layout, file naming, figure paths, and final `xxx.md` promotion.
 
+The required handoff directory is intentionally clean. The final `Inbox/xxx/` folder must contain only:
+
+```text
+Inbox/xxx/
+  xxx.md
+  xxx-naive.md
+  xxx.pdf
+  xxx.txt
+  Figure/
+    xxx-1.png
+    xxx-2.png
+```
+
+Temporary extraction outputs such as `pdffigures2/data-xxx.json`, `pdffigures2/stats.json`, and raw `img-*` crops are allowed only while drafting and checking the note. Delete the temporary `pdffigures2/` directory before handoff.
+
 ## Workflow
 
 Run the tools as separate steps.
@@ -50,21 +65,30 @@ Run the tools as separate steps.
 1. Determine the final Obsidian archive name `xxx`.
    - Use the paper's proposed concept/system/method/artifact name.
    - Prepare the folder, PDF, Markdown, and figure paths according to `references/paper-note-template.md`.
+   - Keep the archive clean: final files are `xxx.md`, `xxx-naive.md`, `xxx.pdf`, `xxx.txt`, and `Figure/`.
+   - Do not create or preserve an `extracted/` directory in the final handoff.
+   - If the source PDF is already in the Inbox root, move it into `Inbox/xxx/xxx.pdf` and do not leave a duplicate in the root. If it is outside the Inbox, copy it into `Inbox/xxx/xxx.pdf` and leave the external original untouched.
 2. Extract text with `pdftotext`.
    - Prefer plain text for reading and reasoning.
    - On Windows, run `.\scripts\verify-windows.ps1` first if tool availability is uncertain.
-   - Example: `pdftotext paper.pdf paper.txt`
+   - Write extracted text to `Inbox/xxx/xxx.txt`.
+   - Example: `pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt`
 3. Read the extracted text.
    - Identify the paper type and main sections.
    - Count or list figure/table mentions from captions and in-text references, such as `Figure 1`, `Fig. 2`, `Table 3`.
 4. Extract figures and tables with `pdffigures2`.
    - Default to `--dpi 600` for clear figure/table crops.
-   - Example: `pdffigures2 --dpi 600 paper.pdf figures`
+   - Write raw `pdffigures2` outputs to temporary `Inbox/xxx/pdffigures2/`, not to `Figure/`.
+   - Example: `pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2`
+   - The temporary directory contains `data-xxx.json`, `stats.json`, and raw crops such as `img-xxx-Figure1-1.png` and `img-xxx-Table1-1.png`.
    - Read the generated figure/table metadata JSON before choosing images to embed.
 5. Cross-validate text needs against extracted figures/tables.
    - Match each needed figure/table by number and caption.
+   - Use `Inbox/xxx/xxx.txt` to determine which Figure/Table items matter, and use `Inbox/xxx/pdffigures2/data-xxx.json` to map each selected item to its raw crop.
    - If a needed item is missing from `pdffigures2`, write `FIX: 手工嵌入 Figure/Table N` at the place where it belongs in the note.
-   - Keep extracted text, figure metadata, and other intermediate files during reading and revision; they are useful for later AI/user inspection. Do not clean them up manually unless the user asks.
+   - Copy only the selected figures/tables that are embedded in the Markdown from `pdffigures2/` into `Figure/`, renaming them as `xxx-N.ext` in first-appearance order.
+   - Markdown must reference only `Figure/xxx-N.ext`; never reference `pdffigures2/`, `extracted/`, or raw `img-*` paths.
+   - After the note is checked and all selected figures are copied to `Figure/`, delete the entire temporary `Inbox/xxx/pdffigures2/` directory.
 6. Read the schema and template.
    - Use [references/paper-note-schema.md](references/paper-note-schema.md).
    - Use [references/paper-note-template.md](references/paper-note-template.md) for the final Markdown structure and strict figure/table file rules.
@@ -76,19 +100,25 @@ Run the tools as separate steps.
 8. Fill gaps carefully.
    - Mark unknown or missing items as `FIX: info`.
    - Do not invent facts, numbers, or results.
+9. Hand off the first draft.
+   - First-generation output must include both `Inbox/xxx/xxx-naive.md` and `Inbox/xxx/xxx.md`.
+   - Write the first AI-generated draft to `xxx-naive.md`, then copy the same content to `xxx.md`.
+   - Treat `xxx-naive.md` as the baseline draft for later comparison and skill improvement.
+   - Treat `xxx.md` as the user's working/final copy. The user edits `xxx.md` directly, and `paper-archiver` archives `xxx.md`.
+   - Before handoff, verify the final directory contains no `pdffigures2/`, `extracted/`, raw `img-*`, `data-*.json`, or `stats.json` files.
 
 ### Revision / Learning Workflow
 
 When revising an existing note after user discussion:
 
-1. Preserve the first generated note as the baseline draft. Before substantial revision, copy `xxx.md` to `xxx-edit.md` in the same paper folder and revise `xxx-edit.md`; keep figures and the original PDF unchanged.
-2. Compare the baseline draft, the edited note, and the user's critique before deciding what should become the final note.
+1. Preserve `xxx-naive.md` as the first generated baseline. Revise `xxx.md` directly; if `xxx-naive.md` is missing, recreate it before substantial revision only if the original first draft can be recovered. Keep figures and the original PDF unchanged.
+2. Compare `xxx-naive.md`, the current `xxx.md`, and the user's critique before deciding what should become the final note.
 3. Preserve useful basic facts, figures, experimental setup, and reproducibility context unless they are wrong or pure bookkeeping.
 4. Replace template-shaped sections with sharper mechanism explanations when the discussion reveals a better abstraction.
 5. Add reader-derived insights as `适用边界与思考` or an equivalent final section, but keep them general enough to transfer beyond the current paper.
-6. After the edited note is accepted, compare the diff between `xxx.md` and `xxx-edit.md` to identify process lessons. If the lesson improves future paper-note drafting in a general way, update this skill before finalizing the paper note.
-7. After the skill reflection, promote the accepted edited note by overwriting `xxx.md` with `xxx-edit.md` for archiving. Keep `xxx-edit.md` unless the user asks to delete it.
-8. Keep extracted text, figure metadata, and other intermediate files through the whole reading/revision process. The Obsidian archiver/plugin may clean unreferenced non-PDF generated files later; do not preemptively delete them.
+6. After the edited note is accepted, compare the diff between `xxx-naive.md` and `xxx.md` to identify process lessons. If the lesson improves future paper-note drafting in a general way, update this skill before finalizing the paper note.
+7. After the skill reflection, leave the accepted edited note as `xxx.md` for archiving. Keep `xxx-naive.md` through revision unless the user asks to delete it.
+8. Keep `xxx.txt` through revision. Do not keep temporary `pdffigures2/` outputs after selected figures have been copied to `Figure/`; regenerate them from `xxx.pdf` if deeper figure inspection is needed later.
 9. Do not update this skill from a single paper unless the lesson improves the drafting process across future papers.
 
 ## Useful Resources
@@ -101,4 +131,4 @@ When revising an existing note after user discussion:
 - Produce a clean Markdown note suitable for Obsidian.
 - Include the paper's core logic, not just the abstract.
 - Produce an archiver-ready folder and final `xxx.md` according to `references/paper-note-template.md`.
-- Keep useful extraction intermediates during reading/revision unless the user asks to clean them.
+- Keep only the clean handoff files: `xxx.md`, `xxx-naive.md`, `xxx.pdf`, `xxx.txt`, and `Figure/`. Temporary `pdffigures2/` outputs must be deleted before handoff.
