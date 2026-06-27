@@ -21,23 +21,16 @@ The note should support an iterative reading workflow: draft a first note from t
 
 Before drafting, read both reference files and follow their division of labor. Do not duplicate or override reference rules in ad hoc prose unless the user explicitly asks for a different format.
 
-## Windows Tool Setup
+## Tool Requirements
 
-On Windows, verify the local toolchain before processing a PDF:
+Before processing a PDF, the runtime environment must provide these commands on `PATH`:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
-```
+- `pdftotext`: extracts plain text from the paper PDF.
+- `pdffigures2`: extracts figures, tables, captions, metadata, and raw crops.
 
-If `pdftotext` or `pdffigures2` is missing, bootstrap the bundled tools:
+Prefer commands already available on `PATH`. If `pdffigures2` is not on `PATH` and `.tools/bin/pdffigures2` exists under this skill directory, prepend `.tools/bin` to `PATH` for extraction commands.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
-```
-
-The bootstrap script installs wrappers under `.tools\bin` inside this skill directory and prints the PATH entry to add for the current shell. It uses system Java when available; if Java is missing, it downloads a portable JRE under `.tools\java` and points the `pdffigures2` wrapper at that local runtime.
-
-When this skill is cloned from GitHub, `bootstrap-windows.ps1` tries to infer the repository from `git remote origin` and download `pdffigures2-assembly.jar` from the latest GitHub Release. If the skill was installed without `.git`, pass `-Repo owner/repo` or set `PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL` to a direct jar URL.
+This skill is intentionally OS-agnostic at runtime. Installation and platform-specific setup are documented in `README.md`; do not run setup/bootstrap scripts during normal note drafting unless the user explicitly asks for tool installation or repair.
 
 ## Output Contract
 
@@ -70,7 +63,6 @@ Run the tools as separate steps.
    - If the source PDF is already in the Inbox root, move it into `Inbox/xxx/xxx.pdf` and do not leave a duplicate in the root. If it is outside the Inbox, copy it into `Inbox/xxx/xxx.pdf` and leave the external original untouched.
 2. Extract text with `pdftotext`.
    - Prefer plain text for reading and reasoning.
-   - On Windows, run `.\scripts\verify-windows.ps1` first if tool availability is uncertain.
    - Write extracted text to `Inbox/xxx/xxx.txt`.
    - Example: `pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt`
 3. Read the extracted text.

@@ -11,7 +11,16 @@
 
 ## Install
 
-推荐直接 clone 到 Codex skills 目录：
+推荐直接 clone 到 Codex skills 目录。
+
+macOS:
+
+```bash
+git clone https://github.com/WimRhei/paper-note-drafter.git "$HOME/.codex/skills/paper-note-drafter"
+cd "$HOME/.codex/skills/paper-note-drafter"
+```
+
+Windows:
 
 ```powershell
 git clone https://github.com/WimRhei/paper-note-drafter.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
@@ -23,6 +32,46 @@ cd "$env:USERPROFILE\.codex\skills\paper-note-drafter"
 ```text
 %USERPROFILE%\.codex\skills\paper-note-drafter
 ```
+
+## macOS Setup
+
+这个 skill 在 macOS 上也依赖两个外部工具：
+
+- `pdftotext`：抽取 PDF 正文，由 Homebrew 的 Poppler 提供。
+- `pdffigures2`：抽取论文图表和 caption，由本机从 upstream Scala 项目构建后安装为本地命令。
+
+安装系统依赖：
+
+```bash
+brew install poppler openjdk@17 sbt
+```
+
+构建并安装 `pdffigures2` 命令：
+
+```bash
+./scripts/build-pdffigures2-macos.sh
+./scripts/install-pdffigures2-macos.sh
+```
+
+按脚本输出把本仓库的工具目录加入当前 shell：
+
+```bash
+export PATH="$PWD/.tools/bin:$PATH"
+```
+
+然后验证：
+
+```bash
+./scripts/verify-macos.sh
+```
+
+安装后的 `pdffigures2` 命令兼容本 skill 的调用方式：
+
+```bash
+pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
+```
+
+这个命令会把 upstream `pdffigures2` 需要的 stats、metadata 和图片 prefix 参数指向输出目录。
 
 ## Windows Setup
 
@@ -116,8 +165,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
 外部工具说明见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)，主要包括：
 
 - PDFFigures 2.0
-- Poppler / poppler-windows
-- Eclipse Temurin
+- Poppler
+- Java runtimes
 
 ## Maintainer Notes
 
@@ -139,3 +188,5 @@ Build pdffigures2 release asset
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\build-pdffigures2-release.ps1
 ```
+
+macOS 本机构建和安装本地 CLI 的命令见上面的 `macOS Setup`。

@@ -12,19 +12,19 @@ The project also downloads, builds, wraps, or redistributes third-party componen
 - Included artifact: GitHub Releases for this repository may include `pdffigures2-assembly.jar`, built from upstream PDFFigures 2.0.
 - License copy: `third_party/licenses/pdffigures2-LICENSE.txt`.
 
-## poppler-windows and Poppler
+## Poppler
 
-- Source: <https://github.com/oschwartz10612/poppler-windows>
-- Use: Windows Poppler binaries, including `pdftotext.exe`, when no local `pdftotext` is found.
-- License notes: the poppler-windows packaging repository is MIT licensed. Poppler itself is GPL licensed. This skill calls `pdftotext` as an external command and does not link against Poppler libraries.
-- This repository does not currently redistribute Poppler binaries in git or release assets; `bootstrap-windows.ps1` downloads them when needed.
-- Keep and review the license files included in the downloaded archive.
+- Source: <https://poppler.freedesktop.org/>
+- Use: `pdftotext` for PDF text extraction.
+- License notes: Poppler is GPL licensed. This skill calls `pdftotext` as an external command and does not link against Poppler libraries.
+- This repository does not currently redistribute Poppler binaries in git or release assets.
+- Keep and review any license files included with the installed Poppler distribution.
 
-## Eclipse Temurin
+## Java runtimes
 
-- Source: <https://projects.eclipse.org/projects/adoptium.temurin>
-- Use: portable Java runtime when no local Java runtime is found.
-- License notes: Temurin binaries are distributed under multiple open-source licenses. Review the license and NOTICE files included in the downloaded runtime archive.
-- This repository does not currently redistribute Temurin binaries in git or release assets; `bootstrap-windows.ps1` downloads them when needed.
+- Sources include Eclipse Temurin and OpenJDK distributions.
+- Use: Java runtime for the `pdffigures2` command.
+- License notes: Java runtime distributions are released under their own open-source licenses. Review the license and NOTICE files included with the installed runtime.
+- This repository does not currently redistribute Java runtime binaries in git or release assets.
 
-This repository is not affiliated with Allen Institute for AI, Poppler, conda-forge, oschwartz10612/poppler-windows, Eclipse Foundation, or Adoptium.
+This repository is not affiliated with Allen Institute for AI, Poppler, conda-forge, Eclipse Foundation, Adoptium, or OpenJDK distribution maintainers.

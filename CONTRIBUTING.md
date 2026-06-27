@@ -5,28 +5,14 @@ Contributions are welcome through GitHub issues and pull requests.
 ## Before opening a PR
 
 - Keep the skill folder usable as a Codex skill.
-- Keep Windows behavior working unless the change is explicitly platform-specific.
+- Keep platform-specific setup behavior working unless the change intentionally narrows platform support.
 - Do not commit downloaded tools, generated `.tools` contents, release artifacts, logs, private PDFs, or paper notes containing non-public content.
 - Update `README.md` and `THIRD_PARTY_NOTICES.md` when a change adds or changes third-party tools.
 - Prefer small, focused changes with a clear reason.
 
 ## Validation
 
-Run these checks before submitting:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
-```
-
-For script edits, also parse PowerShell files:
-
-```powershell
-$files = Get-ChildItem -LiteralPath .\scripts -Filter *.ps1
-foreach ($f in $files) {
-  $null = [scriptblock]::Create((Get-Content -LiteralPath $f.FullName -Raw))
-  Write-Host "OK $($f.Name)"
-}
-```
+Run the relevant verification flow documented in `README.md` before submitting. For script edits, also run the relevant syntax checks locally.
 
 ## Third-party components
 

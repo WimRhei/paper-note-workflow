@@ -1,6 +1,6 @@
 # Security
 
-This project is a Codex skill and Windows bootstrap workflow for local PDF processing.
+This project is a Codex skill for local PDF text and figure extraction.
 
 ## Reporting
 
@@ -15,7 +15,7 @@ Relevant issues include:
 - Accidental leakage of local file paths, credentials, tokens, or private paper content.
 - Supply-chain risks in release asset generation.
 
-Third-party vulnerabilities in Poppler, PDFFigures 2.0, Java, sbt, or their dependencies should also be reported upstream to the relevant project.
+Third-party vulnerabilities in PDF extraction tools, Java runtimes, build tools, or their dependencies should also be reported upstream to the relevant project.
 
 ## Supported versions
 
