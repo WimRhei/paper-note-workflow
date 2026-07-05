@@ -151,6 +151,8 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 
 The exact installation method depends on your operating system. See the [external tools guide](external-tools.en.md), follow the upstream project instructions, and comply with their licenses.
 
+Note: `pdffigures2` is the command-line interface expected by this workflow. The upstream project may not install a command with that exact name. If needed, use [examples/pdffigures2-wrapper.sh](../examples/pdffigures2-wrapper.sh) as an adapter template.
+
 ## Third-party Licensing
 
 This repository's own code, skills, and documentation are licensed under MIT. External tools keep their own licenses:

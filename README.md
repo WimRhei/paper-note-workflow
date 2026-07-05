@@ -151,6 +151,8 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 
 具体安装方式取决于你的操作系统。请参考 [外部工具安装指南](docs/external-tools.md)、上游项目说明，并遵守上游许可证。
 
+注意：这里的 `pdffigures2` 是本 workflow 期望的命令行接口。上游项目不一定直接安装同名命令；如果需要，可以使用 [examples/pdffigures2-wrapper.sh](examples/pdffigures2-wrapper.sh) 作为 adapter 模板。
+
 ## 第三方许可
 
 本仓库自己的代码、skills 和文档使用 MIT License。外部工具保留各自许可证：

@@ -20,11 +20,13 @@ java -version
 pdffigures2 --help
 ```
 
-这里的 `pdffigures2` 是本 workflow 期望的适配器命令名。上游项目原生提供的是 Scala/sbt CLI，不一定会直接安装一个同名命令。如果你的安装方式不是这个命令名，可以自己写一个 wrapper，让下面的调用可用：
+这里的 `pdffigures2` 是本 workflow 期望的适配器命令名。上游项目原生提供的是 Scala/sbt CLI，不一定会直接安装一个同名命令。为了让 `paper-note-drafter` 可以自动执行抽图，最终需要在 `PATH` 上提供一个命令，满足下面的接口：
 
 ```bash
 pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
+
+仓库里提供了一个轻量 wrapper 模板：[examples/pdffigures2-wrapper.sh](../examples/pdffigures2-wrapper.sh)。它不包含 jar，也不下载任何依赖；你需要自己构建或获取 `pdffigures2` jar，然后设置 `PDFFIGURES2_JAR`。
 
 ## pdftotext
 
@@ -84,6 +86,21 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
 
 wrapper 可以把上述参数转换成你本地 `FigureExtractorBatchCli` 或 jar 的实际调用方式。只要最终生成 `pdffigures2/` 目录、metadata JSON 和 raw crop 图片，`paper-note-drafter` 就能按文件契约继续工作。
+
+如果你已经有 standalone jar，可以按模板创建命令：
+
+```bash
+cp examples/pdffigures2-wrapper.sh ~/.local/bin/pdffigures2
+chmod +x ~/.local/bin/pdffigures2
+export PDFFIGURES2_JAR=/absolute/path/to/pdffigures2-assembly.jar
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+然后验证：
+
+```bash
+pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
+```
 
 上游 README 给出的批量抽取入口是 `FigureExtractorBatchCli`，形式是：
 

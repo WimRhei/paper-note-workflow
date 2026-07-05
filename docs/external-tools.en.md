@@ -20,11 +20,13 @@ java -version
 pdffigures2 --help
 ```
 
-In this workflow, `pdffigures2` is the expected adapter command name. The upstream project exposes Scala/sbt CLIs and may not install a command with this exact name. If your setup uses a different command, create a local wrapper so this call works:
+In this workflow, `pdffigures2` is the expected adapter command name. The upstream project exposes Scala/sbt CLIs and may not install a command with this exact name. To let `paper-note-drafter` run figure extraction automatically, provide a command on `PATH` that satisfies this interface:
 
 ```bash
 pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
+
+This repository includes a lightweight wrapper template: [examples/pdffigures2-wrapper.sh](../examples/pdffigures2-wrapper.sh). It does not include a jar and does not download dependencies. Build or obtain the `pdffigures2` jar yourself, then set `PDFFIGURES2_JAR`.
 
 ## pdftotext
 
@@ -84,6 +86,21 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
 
 The wrapper can translate those arguments to your local `FigureExtractorBatchCli` or jar command. As long as it creates a `pdffigures2/` directory with metadata JSON and raw crop images, `paper-note-drafter` can continue from the file contract.
+
+If you already have a standalone jar, create the adapter command from the template:
+
+```bash
+cp examples/pdffigures2-wrapper.sh ~/.local/bin/pdffigures2
+chmod +x ~/.local/bin/pdffigures2
+export PDFFIGURES2_JAR=/absolute/path/to/pdffigures2-assembly.jar
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Then verify:
+
+```bash
+pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
+```
 
 The upstream README documents `FigureExtractorBatchCli` for batch extraction:
 
