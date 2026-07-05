@@ -149,7 +149,7 @@ pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt
 pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
 
-The exact installation method depends on your operating system. Follow the upstream project instructions and comply with their licenses.
+The exact installation method depends on your operating system. See the [external tools guide](external-tools.en.md), follow the upstream project instructions, and comply with their licenses.
 
 ## Third-party Licensing
 
@@ -164,6 +164,7 @@ This repository does not redistribute those binaries.
 ## Repository Layout
 
 ```text
+CONTRIBUTORS.md
 skills/
   paper-note-drafter/
   paper-note-reader/
@@ -172,7 +173,14 @@ obsidian-plugins/
 docs/
   workflow.md
   inbox-contract.md
+  external-tools.md
+  external-tools.en.md
+  README.en.md
 ```
+
+## Contributors
+
+See [CONTRIBUTORS.md](../CONTRIBUTORS.md).
 
 ## Status
 

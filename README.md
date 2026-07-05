@@ -149,7 +149,7 @@ pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt
 pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
 
-具体安装方式取决于你的操作系统。请参考上游项目说明，并遵守上游许可证。
+具体安装方式取决于你的操作系统。请参考 [外部工具安装指南](docs/external-tools.md)、上游项目说明，并遵守上游许可证。
 
 ## 第三方许可
 
@@ -164,6 +164,7 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ## 仓库结构
 
 ```text
+CONTRIBUTORS.md
 skills/
   paper-note-drafter/
   paper-note-reader/
@@ -172,8 +173,13 @@ obsidian-plugins/
 docs/
   workflow.md
   inbox-contract.md
+  external-tools.md
   README.en.md
 ```
+
+## 贡献者
+
+见 [CONTRIBUTORS.md](CONTRIBUTORS.md)。
 
 ## 状态
 
