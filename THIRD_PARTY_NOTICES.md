@@ -1,30 +1,27 @@
 # Third-party Notices
 
-This repository's own skill files, scripts, and documentation are licensed under the MIT License in `LICENSE`.
+This repository's own code, Codex skills, Obsidian plugin files, and documentation are licensed under the MIT License in `LICENSE`.
 
-The project also downloads, builds, wraps, or redistributes third-party components. Those components remain under their own licenses.
+The workflow depends on external tools that are not bundled, downloaded, built, or redistributed by this repository. Users are responsible for installing those tools and complying with their licenses.
 
 ## PDFFigures 2.0
 
 - Source: <https://github.com/allenai/pdffigures2>
 - Use: figure, table, and caption extraction from PDF files.
 - License: Apache License 2.0.
-- Included artifact: GitHub Releases for this repository may include `pdffigures2-assembly.jar`, built from upstream PDFFigures 2.0.
-- License copy: `third_party/licenses/pdffigures2-LICENSE.txt`.
+- Repository status: not bundled and not redistributed here.
 
-## Poppler
+## Poppler / pdftotext
 
 - Source: <https://poppler.freedesktop.org/>
-- Use: `pdftotext` for PDF text extraction.
-- License notes: Poppler is GPL licensed. This skill calls `pdftotext` as an external command and does not link against Poppler libraries.
-- This repository does not currently redistribute Poppler binaries in git or release assets.
-- Keep and review any license files included with the installed Poppler distribution.
+- Use: `pdftotext` extracts plain text from PDF files.
+- License notes: Poppler is distributed under its own license terms. This workflow invokes `pdftotext` as an external command.
+- Repository status: not bundled and not redistributed here.
 
-## Java runtimes
+## Java Runtime
 
-- Sources include Eclipse Temurin and OpenJDK distributions.
-- Use: Java runtime for the `pdffigures2` command.
-- License notes: Java runtime distributions are released under their own open-source licenses. Review the license and NOTICE files included with the installed runtime.
-- This repository does not currently redistribute Java runtime binaries in git or release assets.
+- Use: required by common `pdffigures2` distributions.
+- License notes: the selected Java runtime distribution keeps its own license and notices.
+- Repository status: not bundled and not redistributed here.
 
-This repository is not affiliated with Allen Institute for AI, Poppler, conda-forge, Eclipse Foundation, Adoptium, or OpenJDK distribution maintainers.
+This repository is not affiliated with Allen Institute for AI, Poppler, Eclipse Foundation, Adoptium, OpenJDK, or other external tool maintainers.

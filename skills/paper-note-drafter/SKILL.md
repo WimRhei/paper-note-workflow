@@ -28,9 +28,9 @@ Before processing a PDF, the runtime environment must provide these commands on 
 - `pdftotext`: extracts plain text from the paper PDF.
 - `pdffigures2`: extracts figures, tables, captions, metadata, and raw crops.
 
-Prefer commands already available on `PATH`. If `pdffigures2` is not on `PATH` and `.tools/bin/pdffigures2` exists under this skill directory, prepend `.tools/bin` to `PATH` for extraction commands.
+Prefer commands already available on `PATH`.
 
-This skill is intentionally OS-agnostic at runtime. Installation and platform-specific setup are documented in `README.md`; do not run setup/bootstrap scripts during normal note drafting unless the user explicitly asks for tool installation or repair.
+This skill is intentionally OS-agnostic at runtime. The repository does not bundle or install external PDF tools; users should install them from upstream sources and make them available on `PATH`.
 
 ## Output Contract
 
@@ -50,6 +50,8 @@ Inbox/xxx/
 ```
 
 Temporary extraction outputs such as `pdffigures2/data-xxx.json`, `pdffigures2/stats.json`, and raw `img-*` crops are allowed only while drafting and checking the note. Delete the temporary `pdffigures2/` directory before handoff.
+
+`xxx-naive.md` and `xxx.txt` are pre-archive review artifacts: `paper-note-reader` uses them for diff review and source verification. The local `paper-archiver` removes both during archive, so the archived paper keeps only the final `xxx.md`, `PDF/xxx.pdf`, and referenced `Figure/xxx-N.ext` files.
 
 ## Workflow
 
@@ -108,9 +110,10 @@ When revising an existing note after user discussion:
 3. Preserve useful basic facts, figures, experimental setup, and reproducibility context unless they are wrong or pure bookkeeping.
 4. Replace template-shaped sections with sharper mechanism explanations when the discussion reveals a better abstraction.
 5. Add reader-derived insights as `适用边界与思考` or an equivalent final section, but keep them general enough to transfer beyond the current paper.
-6. After the edited note is accepted, compare the diff between `xxx-naive.md` and `xxx.md` to identify process lessons. If the lesson improves future paper-note drafting in a general way, update this skill before finalizing the paper note.
+6. After the edited note is accepted, compare the diff between `xxx-naive.md` and `xxx.md` to identify process lessons. Before updating `SKILL.md`, `references/paper-note-schema.md`, or `references/paper-note-template.md`, first tell the user the diff-derived drafting problem, the target file/section, and the proposed general rule; update only after the user confirms. If the confirmed lesson improves future paper-note drafting in a general way, update the appropriate skill file before finalizing the paper note.
 7. After the skill reflection, leave the accepted edited note as `xxx.md` for archiving. Keep `xxx-naive.md` through revision unless the user asks to delete it.
 8. Keep `xxx.txt` through revision. Do not keep temporary `pdffigures2/` outputs after selected figures have been copied to `Figure/`; regenerate them from `xxx.pdf` if deeper figure inspection is needed later.
+   The archive step removes `xxx.txt` and `xxx-naive.md`; keep them until then.
 9. Do not update this skill from a single paper unless the lesson improves the drafting process across future papers.
 
 ## Useful Resources

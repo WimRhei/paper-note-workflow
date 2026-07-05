@@ -1,192 +1,176 @@
-# Paper Note Drafter
+# Paper Note Workflow
 
-一个用于从论文 PDF 草拟中文结构化笔记的 Codex skill。它会先抽取正文，再抽取关键图表，最后按本仓库的 schema/template 生成适合 Obsidian 归档的 Markdown 笔记。
+An opinionated paper-reading workflow for Codex and Obsidian.
 
-适合的场景：
+This repository contains:
 
-- 阅读论文 PDF，并生成中文论文笔记。
-- 将笔记落到 `03-论文阅读/Inbox/xxx/xxx.md`。
-- 把关键图表放到 `Figure/xxx-N.ext` 并在正文中引用。
-- 在缺失信息或漏提取图表处保留 `FIX:` 标记，方便人工复查。
+- `paper-note-drafter`: a Codex skill that turns a paper PDF into a reviewable Chinese Markdown note.
+- `paper-note-reader`: a Codex skill for follow-up reading, note revision, source verification, and final diff review.
+- `paper-archiver`: an Obsidian plugin that archives a reviewed Inbox paper folder into a topic folder.
+
+The workflow is built around a shared file contract. The draft and reading stages keep extra files for verification. The archive stage removes those review artifacts and keeps only the final knowledge-base files.
+
+## Workflow
+
+### 1. Draft
+
+Use `paper-note-drafter` on a PDF. It extracts text, extracts candidate figures/tables, writes a first draft, and prepares an Obsidian Inbox folder.
+
+Expected draft output:
+
+```text
+Inbox/xxx/
+  xxx.md
+  xxx-naive.md
+  xxx.pdf
+  xxx.txt
+  Figure/
+    xxx-1.png
+    xxx-2.png
+```
+
+File roles:
+
+- `xxx.md`: the working note. This is the note the user edits and the archiver eventually keeps.
+- `xxx-naive.md`: the first generated draft. Keep it through review so `paper-note-reader` can compare it with the edited note.
+- `xxx.txt`: text extracted from the PDF. Keep it through review so the reader can verify claims against the source.
+- `xxx.pdf`: the original paper PDF.
+- `Figure/`: only the figures or tables actually referenced by `xxx.md`.
+
+Temporary extraction outputs such as `pdffigures2/`, raw `img-*` crops, `data-*.json`, and `stats.json` may exist while drafting, but should be deleted before handoff.
+
+### 2. Read And Revise
+
+Use `paper-note-reader` after the draft exists.
+
+It works inside `Inbox/xxx/`:
+
+- reads and edits `xxx.md`;
+- uses `xxx.txt` or `xxx.pdf` when verification is needed;
+- preserves `xxx-naive.md` as the baseline;
+- can compare `xxx-naive.md` and `xxx.md` during final diff review.
+
+At the end of this stage, `xxx.md` is the final reviewed note.
+
+### 3. Archive
+
+Use the Obsidian `paper-archiver` plugin.
+
+It scans paper folders of this form:
+
+```text
+Inbox/xxx/xxx.md
+```
+
+After selecting a target topic, the archive result is:
+
+```text
+<topic>/
+  xxx.md
+  PDF/
+    xxx.pdf
+  Figure/
+    xxx-1.png
+    xxx-2.png
+```
+
+Archive cleanup:
+
+- removes `Inbox/xxx/xxx-naive.md`;
+- removes `Inbox/xxx/xxx.txt`;
+- removes unreferenced temporary files;
+- removes the emptied `Inbox/xxx/` folder when possible.
+
+Files directly under `Inbox/` are not archived. The plugin only processes subfolders containing a same-name Markdown file.
+
+## File Contract
+
+The stable interface between all stages is the Inbox paper folder:
+
+```text
+Inbox/xxx/
+  xxx.md            # final working note
+  xxx-naive.md      # review-only first draft baseline
+  xxx.pdf           # original paper
+  xxx.txt           # review-only extracted text
+  Figure/           # figures referenced by xxx.md
+```
+
+Rules:
+
+- The folder name, Markdown name, PDF name, and text name should share the same `xxx` prefix.
+- Markdown should reference figures as `Figure/xxx-N.ext`.
+- `xxx-naive.md` and `xxx.txt` are useful before archive, but are intentionally not preserved after archive.
+- `pdffigures2/`, raw crops, and extraction metadata are temporary implementation details.
+
+See [docs/workflow.md](docs/workflow.md) and [docs/inbox-contract.md](docs/inbox-contract.md) for the longer version.
 
 ## Install
 
-推荐直接 clone 到 Codex skills 目录。
-
-macOS:
+Clone this repository anywhere you keep workflow tools:
 
 ```bash
-git clone https://github.com/WimRhei/paper-note-drafter.git "$HOME/.codex/skills/paper-note-drafter"
-cd "$HOME/.codex/skills/paper-note-drafter"
+git clone https://github.com/WimRhei/paper-note-workflow.git
 ```
 
-Windows:
+Install the Codex skills by copying or symlinking the skill folders into your Codex skills directory:
 
-```powershell
-git clone https://github.com/WimRhei/paper-note-drafter.git "$env:USERPROFILE\.codex\skills\paper-note-drafter"
-cd "$env:USERPROFILE\.codex\skills\paper-note-drafter"
+```bash
+mkdir -p "$HOME/.codex/skills"
+ln -s "$PWD/skills/paper-note-drafter" "$HOME/.codex/skills/paper-note-drafter"
+ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
 ```
 
-或者把整个 `paper-note-drafter` 文件夹复制到：
+Install the Obsidian plugin by copying or symlinking `obsidian-plugins/paper-archiver` into your vault:
 
 ```text
-%USERPROFILE%\.codex\skills\paper-note-drafter
+<your-vault>/.obsidian/plugins/paper-archiver/
 ```
 
-## macOS Setup
+Then enable `paper-archiver` in Obsidian's community plugins settings.
 
-这个 skill 在 macOS 上也依赖两个外部工具：
+## External Tools
 
-- `pdftotext`：抽取 PDF 正文，由 Homebrew 的 Poppler 提供。
-- `pdffigures2`：抽取论文图表和 caption，由本机从 upstream Scala 项目构建后安装为本地命令。
+This repository does not bundle or download heavyweight external tools.
 
-安装系统依赖：
+Install these tools yourself and make sure they are available on `PATH`:
 
-```bash
-brew install poppler openjdk@17 sbt
-```
+- `pdftotext`: used by `paper-note-drafter` to extract paper text.
+- `pdffigures2`: used by `paper-note-drafter` to extract figure/table candidates and captions.
+- Java runtime: required by most `pdffigures2` distributions.
 
-构建并安装 `pdffigures2` 命令：
-
-```bash
-./scripts/build-pdffigures2-macos.sh
-./scripts/install-pdffigures2-macos.sh
-```
-
-按脚本输出把本仓库的工具目录加入当前 shell：
+Example commands used by the workflow:
 
 ```bash
-export PATH="$PWD/.tools/bin:$PATH"
-```
-
-然后验证：
-
-```bash
-./scripts/verify-macos.sh
-```
-
-安装后的 `pdffigures2` 命令兼容本 skill 的调用方式：
-
-```bash
+pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt
 pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```
 
-这个命令会把 upstream `pdffigures2` 需要的 stats、metadata 和图片 prefix 参数指向输出目录。
+The exact installation method depends on your operating system. Follow the upstream project instructions and comply with their licenses.
 
-## Windows Setup
+## Third-party Licensing
 
-这个 skill 依赖两个外部工具：
+This repository's own code, skills, and documentation are licensed under MIT. External tools keep their own licenses:
 
-- `pdftotext`：抽取 PDF 正文。
-- `pdffigures2`：抽取论文图表和 caption。
+- PDFFigures 2.0: Apache License 2.0, see <https://github.com/allenai/pdffigures2>.
+- Poppler / `pdftotext`: Poppler project license terms apply, see <https://poppler.freedesktop.org/>.
+- Java runtimes: the selected runtime distribution's license terms apply.
 
-先验证工具是否可用：
+This repository does not redistribute those binaries.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
-```
-
-如果缺少工具，运行 bootstrap：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
-```
-
-脚本会：
-
-1. 准备 `pdftotext`。
-2. 准备 `pdffigures2-assembly.jar`。
-3. 如果本机没有 Java，下载 portable JRE。
-4. 在 `.tools\bin` 下生成本地 wrapper。
-5. 打印需要加入当前 PowerShell 会话的 PATH。
-
-按脚本输出执行类似命令：
-
-```powershell
-$env:Path = "C:\path\to\paper-note-drafter\.tools\bin;" + $env:Path
-```
-
-然后再次验证：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\verify-windows.ps1
-```
-
-## Use
-
-在 Codex 中调用 skill，并提供 PDF 路径：
+## Repository Layout
 
 ```text
-[$paper-note-drafter] 请阅读这篇 PDF，按 schema 生成中文论文笔记。
+skills/
+  paper-note-drafter/
+  paper-note-reader/
+obsidian-plugins/
+  paper-archiver/
+docs/
+  workflow.md
+  inbox-contract.md
 ```
 
-核心流程：
+## Status
 
-1. 用 `pdftotext` 抽取正文到 `Inbox/xxx/xxx.txt`。
-2. 阅读正文，识别论文主线、机制和图表引用。
-3. 用 `pdffigures2 --dpi 600` 临时抽取图表到 `Inbox/xxx/pdffigures2/`。
-4. 用 `xxx.txt` 和 `pdffigures2/data-xxx.json` 对照检查图表是否提取完整。
-5. 只把正文引用的关键图表复制到 `Inbox/xxx/Figure/xxx-N.ext`，缺失图表用 `FIX: 手工嵌入 Figure/Table N` 标记。
-6. 按 `references/paper-note-schema.md` 和 `references/paper-note-template.md` 生成中文 Markdown。
-7. 删除临时 `Inbox/xxx/pdffigures2/`，最终不保留 raw crops、metadata 或 stats。
-
-输出约定：
-
-- 笔记路径：`03-论文阅读/Inbox/xxx/xxx.md`
-- PDF 路径：`03-论文阅读/Inbox/xxx/xxx.pdf`
-- 文本路径：`03-论文阅读/Inbox/xxx/xxx.txt`
-- 图表路径：`03-论文阅读/Inbox/xxx/Figure/xxx-N.ext`
-
-## Release Asset
-
-Windows bootstrap 会从最新 GitHub Release 查找：
-
-```text
-pdffigures2-assembly.jar
-```
-
-如果脚本无法从 `git remote origin` 推断仓库名，可以显式传入：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1 -Repo WimRhei/paper-note-drafter
-```
-
-也可以指定 jar URL：
-
-```powershell
-$env:PAPER_NOTE_DRAFTER_PDFFIGURES2_JAR_URL = "https://github.com/WimRhei/paper-note-drafter/releases/latest/download/pdffigures2-assembly.jar"
-powershell -ExecutionPolicy Bypass -File .\scripts\bootstrap-windows.ps1
-```
-
-## Third-party Components
-
-本仓库的 skill 文件、脚本和文档使用 MIT License。详见 [`LICENSE`](LICENSE)。
-
-外部工具说明见 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)，主要包括：
-
-- PDFFigures 2.0
-- Poppler
-- Java runtimes
-
-## Maintainer Notes
-
-构建 `pdffigures2-assembly.jar`：
-
-```text
-Build pdffigures2 release asset
-```
-
-发布新版本时：
-
-1. 运行 workflow。
-2. 下载 artifact `pdffigures2-assembly.jar`。
-3. 创建新的 GitHub Release。
-4. 把 jar 作为 release asset 上传。
-
-本地构建：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-pdffigures2-release.ps1
-```
-
-macOS 本机构建和安装本地 CLI 的命令见上面的 `macOS Setup`。
+This is a personal workflow extracted from a real Obsidian/Codex setup. Expect the file contract to stay stable, while the prompts and plugin UI may evolve.

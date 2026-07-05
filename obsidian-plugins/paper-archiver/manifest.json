@@ -1,0 +1,10 @@
+{
+  "id": "paper-archiver",
+  "name": "论文归档器",
+  "version": "1.0.0",
+  "main": "main.js",
+  "minAppVersion": "1.0.0",
+  "description": "将 Inbox 中的论文笔记归档到主题目录，自动清理未引用附件",
+  "author": "Wenstr2y",
+  "isDesktopOnly": true
+}

@@ -1,0 +1,12 @@
+{
+  "name": "paper-archiver",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --platform=node --format=cjs --external:obsidian --outfile=main.js",
+    "check": "node --check main.js"
+  },
+  "devDependencies": {
+    "esbuild": "latest"
+  }
+}

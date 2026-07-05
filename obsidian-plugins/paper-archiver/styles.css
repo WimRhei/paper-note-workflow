@@ -1,0 +1,454 @@
+/* ============================================================
+   Paper Archiver — GitHub-inspired UI
+   ============================================================ */
+
+/* ---- Modal container ---- */
+.paper-archiver-modal {
+    max-height: 78vh;
+    display: flex;
+    flex-direction: column;
+    font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---- Header ---- */
+.pa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    margin-bottom: 18px;
+}
+
+.pa-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pa-header-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-modifier-hover);
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.pa-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    border: none;
+    padding: 0;
+}
+
+.pa-badge-count {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 2em;
+    border: 1px solid var(--background-modifier-border);
+    color: var(--text-muted);
+    background: var(--background-secondary);
+}
+
+/* ---- Paper list ---- */
+.paper-archiver-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 18px;
+}
+
+/* ---- Card ---- */
+.pa-card {
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    background: var(--background-secondary);
+}
+
+.pa-card.excluded {
+    opacity: 0.45;
+}
+
+/* ---- Card header ---- */
+.pa-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 0 16px;
+}
+
+.pa-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pa-card-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: var(--background-modifier-hover);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.pa-card-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-normal);
+}
+
+/* ---- Toggle switch ---- */
+.pa-toggle {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.pa-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.pa-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--background-modifier-border);
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.pa-toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: var(--background-primary);
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.pa-toggle input:checked + .pa-toggle-slider {
+    background: var(--interactive-accent);
+}
+
+.pa-toggle input:checked + .pa-toggle-slider::before {
+    transform: translateX(18px);
+}
+
+/* ---- Card body ---- */
+.pa-card-body {
+    padding: 12px 16px 14px 16px;
+}
+
+/* ---- Topic row ---- */
+.pa-topic-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.pa-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+/* ---- Custom dropdown ---- */
+.pa-dropdown-wrap {
+    flex: 1;
+    min-width: 130px;
+    position: relative;
+}
+
+.pa-dropdown-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--background-modifier-border);
+    background: var(--background-primary);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-normal);
+    gap: 6px;
+}
+
+.pa-dropdown-btn:hover {
+    background: var(--background-modifier-hover);
+}
+
+.pa-dropdown-arrow {
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.pa-dropdown-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pa-dropdown-panel {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    overflow: hidden;
+}
+
+.pa-dropdown-option {
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-normal);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.pa-dropdown-option:last-child {
+    border-bottom: none;
+}
+
+.pa-dropdown-option:hover {
+    background: var(--background-modifier-hover);
+}
+
+.pa-dropdown-option.selected {
+    color: var(--text-accent);
+    font-weight: 500;
+}
+
+.pa-dropdown-new {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.pa-input {
+    flex: 1;
+    min-width: 100px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid var(--interactive-accent);
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 13px;
+    display: none;
+}
+
+.pa-input:focus {
+    outline: none;
+}
+
+.pa-input.visible {
+    display: inline-block;
+}
+
+/* ---- Stats badges ---- */
+.pa-stats {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.pa-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 2em;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+.pa-badge-keep {
+    color: #1a7f37;
+    background: #dafbe1;
+    border-color: #b4f1c3;
+}
+
+.pa-badge-delete {
+    color: #cf222e;
+    background: #ffebe9;
+    border-color: #ffc1ba;
+}
+
+/* ---- Details (file list) ---- */
+.pa-detail-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--background-modifier-hover);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 10px;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.pa-detail-toggle:hover {
+    background: var(--background-modifier-border);
+    color: var(--text-normal);
+    border-color: var(--text-accent);
+}
+
+.pa-details-content {
+    margin-top: 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* -- file group header -- */
+.pa-file-group {
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.pa-file-group:last-child {
+    border-bottom: none;
+}
+
+.pa-file-group-label {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+    background: var(--background-secondary-alt);
+}
+
+.pa-file-group.keeping .pa-file-group-label {
+    color: #1a7f37;
+}
+
+.pa-file-group.removing .pa-file-group-label {
+    color: #cf222e;
+}
+
+.pa-file-list {
+    list-style: none;
+    padding: 4px 0;
+    margin: 0;
+}
+
+.pa-file-list li {
+    padding: 4px 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.pa-file-list li.pa-file-keep::before {
+    content: "+";
+    color: #1a7f37;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+.pa-file-list li.pa-file-delete {
+    color: var(--text-faint);
+    text-decoration: line-through;
+}
+
+.pa-file-list li.pa-file-delete::before {
+    content: "−";
+    color: #cf222e;
+    font-weight: 700;
+    margin-right: 8px;
+}
+
+/* ---- Footer buttons ---- */
+.pa-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding-top: 14px;
+}
+
+.pa-footer-hint {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-right: auto;
+}
+
+.pa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+    transition: background 0.12s ease;
+    border: 1px solid var(--background-modifier-border);
+    white-space: nowrap;
+}
+
+.pa-btn-secondary {
+    background: var(--background-secondary);
+    color: var(--text-normal);
+}
+
+.pa-btn-secondary:hover {
+    background: var(--background-modifier-hover);
+}
+
+.pa-btn-primary {
+    background: #1f883d;
+    border-color: #1a7f37;
+    color: #fff;
+    font-weight: 600;
+}
+
+.pa-btn-primary:hover {
+    background: #1a7f37;
+}

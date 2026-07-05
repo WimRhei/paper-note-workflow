@@ -33,11 +33,11 @@ Inbox/xxx/
     xxx-2.png
 ```
 
-- `xxx.md`、`xxx-naive.md`、`xxx.pdf`、`xxx.txt` 和 `Figure/` 是 Obsidian / `paper-archiver` 面向的归档输入文件。
+- `xxx.md`、`xxx-naive.md`、`xxx.pdf`、`xxx.txt` 和 `Figure/` 是 Obsidian / `paper-archiver` 面向的归档输入文件；其中 `xxx-naive.md` 和 `xxx.txt` 只用于归档前 review，不进入归档结果。
 - `Figure/` 只放最终 Markdown 实际引用的图表，并按 `xxx-N.ext` 重命名。
 - 正文只能引用 `Figure/xxx-N.ext`，不能引用 `pdffigures2/`、`extracted/` 或 raw `img-*` 路径。
 - `pdffigures2/` 临时目录的实际输出包括 `data-xxx.json`、`stats.json`、`img-xxx-FigureN-1.png`、`img-xxx-TableN-1.png` 等。它只用于和 `xxx.txt` 对照检查图表是否提取完整；检查完成后删除。
-- 插件归档后输出为 `03-论文阅读/<topic>/xxx.md`、`03-论文阅读/<topic>/xxx-naive.md`、`03-论文阅读/<topic>/xxx.txt`、`03-论文阅读/<topic>/PDF/xxx.pdf`、`03-论文阅读/<topic>/Figure/xxx-N.ext`。
+- 插件归档后输出为 `03-论文阅读/<topic>/xxx.md`、`03-论文阅读/<topic>/PDF/xxx.pdf`、`03-论文阅读/<topic>/Figure/xxx-N.ext`；`xxx-naive.md` 和 `xxx.txt` 在归档时删除。
 - 插件会删除未引用临时文件并清理空的 `Inbox/xxx/` 暂存目录，但最终交付前应主动删除 `pdffigures2/`，不要依赖插件清理。
 
 ## 图表文件规则

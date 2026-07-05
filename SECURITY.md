@@ -1,6 +1,6 @@
 # Security
 
-This project is a Codex skill for local PDF text and figure extraction.
+This project is a Codex and Obsidian workflow for local paper-note drafting, reading, and archiving.
 
 ## Reporting
 
@@ -10,12 +10,11 @@ Report security issues through GitHub issues unless the repository owner enables
 
 Relevant issues include:
 
-- Unsafe download or extraction behavior in bootstrap scripts.
 - Command injection or path handling bugs.
 - Accidental leakage of local file paths, credentials, tokens, or private paper content.
-- Supply-chain risks in release asset generation.
+- Unsafe handling of untrusted PDFs or extracted text/figure files.
 
-Third-party vulnerabilities in PDF extraction tools, Java runtimes, build tools, or their dependencies should also be reported upstream to the relevant project.
+Third-party vulnerabilities in PDF extraction tools, Java runtimes, build tools, or their dependencies should be reported upstream to the relevant project. This repository does not bundle or redistribute those tools.
 
 ## Supported versions
 
