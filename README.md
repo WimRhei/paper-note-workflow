@@ -111,6 +111,7 @@ Clone this repository anywhere you keep workflow tools:
 
 ```bash
 git clone https://github.com/WimRhei/paper-note-workflow.git
+cd paper-note-workflow
 ```
 
 Install the Codex skills by copying or symlinking the skill folders into your Codex skills directory:
