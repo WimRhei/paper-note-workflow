@@ -143,6 +143,15 @@ ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
 ln -s "$PWD/skills/paper-downloader" "$HOME/.codex/skills/paper-downloader"
 ```
 
+To use the IEEE automation route in `paper-downloader`, also prepare the browser state:
+
+- Install Google Chrome.
+- Install and enable the Codex Chrome browser-control extension/plugin.
+- Prefer a dedicated Chrome profile named `Papers-Codex`.
+- Complete institutional access and password-manager setup in that profile.
+
+ACM is not an automated download route. Download ACM PDFs manually, then let `paper-downloader` archive and verify the local PDF.
+
 Install the Obsidian plugin by copying or symlinking `obsidian-plugins/paper-archiver` into your vault:
 
 ```text

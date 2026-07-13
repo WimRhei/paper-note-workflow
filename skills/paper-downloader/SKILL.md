@@ -39,6 +39,22 @@ Use this interface:
 - If no `Inbox` can be located, ask for the target paper workflow `Inbox` path before treating the PDF as ready for downstream drafting.
 - Only use task `outputs/` for ad hoc delivery when the user asks to download a PDF outside the paper-read workflow.
 
+## Browser Prerequisites
+
+IEEE automation depends on the user's real Chrome state, not a fresh script browser.
+
+Before using the IEEE route, the environment should have:
+
+- Google Chrome installed.
+- The Codex Chrome browser-control extension/plugin installed and enabled for the Chrome profile used by the workflow.
+- A dedicated Chrome profile, preferably named `Papers-Codex`.
+- Publisher and institution sessions prepared in that profile when possible.
+- Chrome password manager or the user's normal password manager configured by the user, if institutional login should be auto-filled.
+
+The agent should verify the available Chrome browser backends before opening publisher pages. If Chrome control is unavailable, the Chrome extension/plugin is not enabled, or the `Papers-Codex` profile cannot be reached, stop and ask the user to fix that browser setup instead of falling back to unauthenticated scraping.
+
+Do not ask the user for passwords. The allowed automation boundary is to use the already configured browser profile and click through only when credentials are already filled and the user has authorized that login action.
+
 ## Boundaries
 
 - Use normal publisher, DOI, institution, library, or open-access routes only. Do not bypass paywalls, CAPTCHAs, security interstitials, or access controls.

@@ -143,6 +143,15 @@ ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
 ln -s "$PWD/skills/paper-downloader" "$HOME/.codex/skills/paper-downloader"
 ```
 
+如果要使用 `paper-downloader` 的 IEEE 自动下载路径，还需要准备浏览器状态：
+
+- 安装 Google Chrome。
+- 安装并启用 Codex Chrome 浏览器控制插件/扩展。
+- 建议创建专用 Chrome profile：`Papers-Codex`。
+- 在该 profile 中完成机构认证和密码管理器配置。
+
+ACM 不走自动下载路径；用户手动下载后，再让 `paper-downloader` 归档和验证 PDF。
+
 把 Obsidian 插件复制或软链接到你的 vault：
 
 ```text
