@@ -6,6 +6,7 @@ An opinionated paper-reading workflow for Codex and Obsidian.
 
 This repository contains:
 
+- `paper-downloader`: a Codex skill that prepares PDFs in the Inbox. It can automate arXiv/IEEE when appropriate; ACM is manual-download handoff only.
 - `paper-note-drafter`: a Codex skill that turns a paper PDF into a reviewable Chinese Markdown note.
 - `paper-note-reader`: a Codex skill for follow-up reading, note revision, source verification, and final diff review.
 - `paper-archiver`: an Obsidian plugin that archives a reviewed Inbox paper folder into a topic folder.
@@ -13,6 +14,23 @@ This repository contains:
 The workflow is built around a shared file contract. The draft and reading stages keep extra files for verification. The archive stage removes those review artifacts and keeps only the final knowledge-base files.
 
 ## Workflow
+
+### 0. Download / Prepare PDF
+
+Use `paper-downloader` to prepare the PDF at the stable Inbox entry point:
+
+```text
+论文阅读/Inbox/xxx/
+  xxx.pdf
+```
+
+Routing policy:
+
+- arXiv: download the PDF directly.
+- IEEE: use browser institutional access when needed.
+- ACM: do not automate by default. ACM Digital Library has unstable Cloudflare and reader/download behavior, so the user downloads the PDF manually; the skill then locates, moves, and verifies the local PDF.
+
+`paper-downloader` only creates or fills `xxx.pdf`. It does not create notes, extracted text, or figures.
 
 ### 1. Draft
 
@@ -122,6 +140,7 @@ Install the Codex skills by copying or symlinking the skill folders into your Co
 mkdir -p "$HOME/.codex/skills"
 ln -s "$PWD/skills/paper-note-drafter" "$HOME/.codex/skills/paper-note-drafter"
 ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
+ln -s "$PWD/skills/paper-downloader" "$HOME/.codex/skills/paper-downloader"
 ```
 
 Install the Obsidian plugin by copying or symlinking `obsidian-plugins/paper-archiver` into your vault:
@@ -168,6 +187,7 @@ This repository does not redistribute those binaries.
 ```text
 CONTRIBUTORS.md
 skills/
+  paper-downloader/
   paper-note-drafter/
   paper-note-reader/
 obsidian-plugins/

@@ -6,6 +6,7 @@
 
 这个仓库包含：
 
+- `paper-downloader`：Codex skill，把论文 PDF 准备到 Inbox；arXiv/IEEE 可自动化，ACM 只做人工下载后的归档验证。
 - `paper-note-drafter`：Codex skill，从论文 PDF 草拟中文 Markdown 笔记。
 - `paper-note-reader`：Codex skill，用于后续阅读、修订、查证原文和最终 diff review。
 - `paper-archiver`：Obsidian 插件，把 review 完成的 Inbox 论文文件夹归档到主题目录。
@@ -13,6 +14,23 @@
 这套 workflow 的核心是一个稳定的文件契约。draft 和 reading 阶段会保留额外文件用于查证和对比；archive 阶段会移除这些 review artifact，只保留最终知识库需要的文件。
 
 ## 工作流
+
+### 0. 下载 / 准备 PDF
+
+对论文来源使用 `paper-downloader`，把 PDF 准备到稳定入口：
+
+```text
+论文阅读/Inbox/xxx/
+  xxx.pdf
+```
+
+路由策略：
+
+- arXiv：直接下载 PDF。
+- IEEE：使用浏览器中的机构认证状态下载。
+- ACM：不默认自动化。ACM Digital Library 的 Cloudflare 和 reader/download UI 不稳定，默认由用户手动下载；skill 只负责找到本地 PDF、移动到 Inbox 并验证。
+
+`paper-downloader` 只创建或填充 `xxx.pdf`，不创建笔记、文本或图表文件。
 
 ### 1. 草拟
 
@@ -122,6 +140,7 @@ cd paper-note-workflow
 mkdir -p "$HOME/.codex/skills"
 ln -s "$PWD/skills/paper-note-drafter" "$HOME/.codex/skills/paper-note-drafter"
 ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
+ln -s "$PWD/skills/paper-downloader" "$HOME/.codex/skills/paper-downloader"
 ```
 
 把 Obsidian 插件复制或软链接到你的 vault：
@@ -168,6 +187,7 @@ pdffigures2 --dpi 600 Inbox/xxx/xxx.pdf Inbox/xxx/pdffigures2
 ```text
 CONTRIBUTORS.md
 skills/
+  paper-downloader/
   paper-note-drafter/
   paper-note-reader/
 obsidian-plugins/

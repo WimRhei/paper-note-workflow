@@ -1,6 +1,6 @@
 # Inbox Contract
 
-The Inbox paper folder is the interface between `paper-note-drafter`, `paper-note-reader`, and `paper-archiver`.
+The Inbox paper folder is the interface between `paper-downloader`, `paper-note-drafter`, `paper-note-reader`, and `paper-archiver`.
 
 ## Folder Shape
 
@@ -19,6 +19,15 @@ Inbox/xxx/
 
 ## Required Files
 
+Before drafting, `paper-downloader` may create only:
+
+```text
+Inbox/xxx/
+  xxx.pdf
+```
+
+After drafting, the complete review folder is:
+
 `xxx.md`
 
 The current working note. This is the only Markdown note preserved after archive.
@@ -29,7 +38,7 @@ The first generated draft. It is used for review and diff analysis. It is delete
 
 `xxx.pdf`
 
-The source paper. It is moved to `<topic>/PDF/xxx.pdf` by the archiver.
+The source paper. It is prepared by `paper-downloader`, consumed by `paper-note-drafter`, used for verification by `paper-note-reader`, and moved to `<topic>/PDF/xxx.pdf` by the archiver.
 
 `xxx.txt`
 

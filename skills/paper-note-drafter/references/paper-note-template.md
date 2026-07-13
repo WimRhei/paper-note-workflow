@@ -12,11 +12,11 @@
 - 笔记文件名使用论文提出的核心概念、系统、方法或 artifact 名称：`xxx.md`。
 - `xxx` 使用简短英文或论文原名缩写，避免空格；必要时用 `-` 连接。
 - 图表文件必须使用同一前缀：`xxx-1.ext`、`xxx-2.ext`、`xxx-3.ext`。
-- 为兼容本地 Obsidian `paper-archiver` 插件，归档前暂存目录必须是 `03-论文阅读/Inbox/xxx/xxx.md`。
-- 归档前图表文件放在 `03-论文阅读/Inbox/xxx/Figure/`，源 PDF 放在 `03-论文阅读/Inbox/xxx/`，通常命名为 `xxx.pdf`。
-- 抽取文本放在 `03-论文阅读/Inbox/xxx/xxx.txt`，与 Markdown 和 PDF 同层。
+- 为兼容本地 Obsidian `paper-archiver` 插件，归档前暂存目录必须是 `论文阅读/Inbox/xxx/xxx.md`。
+- 归档前图表文件放在 `论文阅读/Inbox/xxx/Figure/`，源 PDF 放在 `论文阅读/Inbox/xxx/`，通常命名为 `xxx.pdf`。
+- 抽取文本放在 `论文阅读/Inbox/xxx/xxx.txt`，与 Markdown 和 PDF 同层。
 - `xxx-naive.md` 是 AI first draft baseline；`xxx.md` 是用户修订 working/final copy，也是插件归档的正文。
-- `pdffigures2/` 只允许作为临时抽图目录，位于 `03-论文阅读/Inbox/xxx/pdffigures2/`。对照检查完成、所需图表复制到 `Figure/` 后，必须删除整个临时目录。
+- `pdffigures2/` 只允许作为临时抽图目录，位于 `论文阅读/Inbox/xxx/pdffigures2/`。对照检查完成、所需图表复制到 `Figure/` 后，必须删除整个临时目录。
 
 ## 目录布局
 
@@ -37,7 +37,7 @@ Inbox/xxx/
 - `Figure/` 只放最终 Markdown 实际引用的图表，并按 `xxx-N.ext` 重命名。
 - 正文只能引用 `Figure/xxx-N.ext`，不能引用 `pdffigures2/`、`extracted/` 或 raw `img-*` 路径。
 - `pdffigures2/` 临时目录的实际输出包括 `data-xxx.json`、`stats.json`、`img-xxx-FigureN-1.png`、`img-xxx-TableN-1.png` 等。它只用于和 `xxx.txt` 对照检查图表是否提取完整；检查完成后删除。
-- 插件归档后输出为 `03-论文阅读/<topic>/xxx.md`、`03-论文阅读/<topic>/PDF/xxx.pdf`、`03-论文阅读/<topic>/Figure/xxx-N.ext`；`xxx-naive.md` 和 `xxx.txt` 在归档时删除。
+- 插件归档后输出为 `论文阅读/<topic>/xxx.md`、`论文阅读/<topic>/PDF/xxx.pdf`、`论文阅读/<topic>/Figure/xxx-N.ext`；`xxx-naive.md` 和 `xxx.txt` 在归档时删除。
 - 插件会删除未引用临时文件并清理空的 `Inbox/xxx/` 暂存目录，但最终交付前应主动删除 `pdffigures2/`，不要依赖插件清理。
 
 ## 图表文件规则

@@ -1,6 +1,31 @@
 # Workflow
 
-The workflow has three stages: draft, read, archive.
+The workflow has four stages: download/prepare, draft, read, archive.
+
+## Download / Prepare
+
+Run `paper-downloader` before drafting when the PDF is not already in the Inbox contract.
+
+The downloader should:
+
+1. resolve the paper title, DOI, arXiv ID, or publisher page;
+2. choose the short archive name `xxx`;
+3. create or reuse `论文阅读/Inbox/xxx/`;
+4. place the verified PDF at `论文阅读/Inbox/xxx/xxx.pdf`;
+5. stop without creating `xxx.md`, `xxx-naive.md`, `xxx.txt`, `Figure/`, or `pdffigures2/`.
+
+Source routing:
+
+- arXiv: direct PDF download.
+- IEEE: browser-based download with institutional access when needed.
+- ACM: manual handoff only. The user downloads the PDF; Codex locates, moves, and verifies it.
+
+The result should be:
+
+```text
+Inbox/xxx/
+  xxx.pdf
+```
 
 ## Draft
 
@@ -10,7 +35,7 @@ The drafter should:
 
 1. choose a short archive name `xxx`;
 2. create `Inbox/xxx/`;
-3. place the PDF at `Inbox/xxx/xxx.pdf`;
+3. place or reuse the PDF at `Inbox/xxx/xxx.pdf`;
 4. extract text to `Inbox/xxx/xxx.txt`;
 5. extract candidate figures/tables to a temporary `Inbox/xxx/pdffigures2/`;
 6. copy only selected figures/tables into `Inbox/xxx/Figure/`;

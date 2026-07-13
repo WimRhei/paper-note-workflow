@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Downloader"
+  short_description: "Prepare PDFs in the paper Inbox"
+  default_prompt: "Use $paper-downloader to download arXiv/IEEE PDFs or verify a manually downloaded ACM PDF into 论文阅读/Inbox/xxx/xxx.pdf, then hand it to paper-note-drafter."
