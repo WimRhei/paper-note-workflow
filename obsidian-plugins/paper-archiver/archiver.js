@@ -142,7 +142,7 @@ function parseAttachmentRefs(content) {
 /**
  * 将文件夹内的所有文件分为「归档保留」和「临时删除」两类。
  *   - 主 .md 文件（论文笔记本身）单独处理，不计入
- *   - xxx-naive.md 和 xxx.txt → 归档前阅读/校对文件，归档时删除
+ *   - xxx-naive.md、xxx.txt 和 route.txt → 归档前阅读/校对文件，归档时删除
  *   - 其他 .md 文件 → 强制保留
  *   - PDF 文件 → 强制保留
  *   - 文件名与引用匹配 → 保留
@@ -166,7 +166,7 @@ function classifyFiles(allFiles, folderPath, refFilenames, mdPath) {
         const basename = filePath.split("/").pop();
         const ext = (basename.split(".").pop() || "").toLowerCase();
 
-        if (basename === `${paperName}-naive.md` || basename === `${paperName}.txt`) {
+        if (basename === `${paperName}-naive.md` || basename === `${paperName}.txt` || basename === "route.txt") {
             unreferenced.push(filePath);
             continue;
         }
@@ -209,7 +209,7 @@ async function collectFilesRecursive(vault, dirPath) {
  *   2. 写入 .md 文件到主题根目录（扁平化）
  *   3. 移动图片到主题共享 Figure/
  *   4. 移动 PDF 到主题共享 PDF/
- *   5. 删除 xxx-naive.md、xxx.txt 和临时文件
+ *   5. 删除 xxx-naive.md、xxx.txt、route.txt 和临时文件
  *   7. 清理 Inbox 中的空目录
  *
  * @param {object} vault - Obsidian Vault 实例

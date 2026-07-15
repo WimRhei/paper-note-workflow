@@ -9,12 +9,14 @@ Run `paper-downloader` before drafting when the PDF is not already in the Inbox 
 The downloader should:
 
 1. resolve the paper title, DOI, arXiv ID, or publisher page;
-2. choose the short archive name `xxx`;
-3. create or reuse `论文阅读/Inbox/xxx/`;
-4. place the verified PDF at `论文阅读/Inbox/xxx/xxx.pdf`;
-5. stop without creating `xxx.md`, `xxx-naive.md`, `xxx.txt`, `Figure/`, or `pdffigures2/`.
+2. require the user-selected `Algorithm` or `Architecture` reading route without inferring it from the paper;
+3. choose the short archive name `xxx`;
+4. create or reuse `论文阅读/Inbox/xxx/`;
+5. place the verified PDF at `论文阅读/Inbox/xxx/xxx.pdf`;
+6. write the normalized reading route to `论文阅读/Inbox/xxx/route.txt`;
+7. stop without creating `xxx.md`, `xxx-naive.md`, `xxx.txt`, `Figure/`, or `pdffigures2/`.
 
-Source routing:
+Source routes:
 
 - arXiv: direct PDF download.
 - IEEE: browser-based download with institutional access when needed.
@@ -25,6 +27,7 @@ The result should be:
 ```text
 Inbox/xxx/
   xxx.pdf
+  route.txt
 ```
 
 ## Draft
@@ -33,14 +36,15 @@ Run `paper-note-drafter` on a paper PDF.
 
 The drafter should:
 
-1. choose a short archive name `xxx`;
-2. create `Inbox/xxx/`;
+1. inherit a valid `route.txt` from the downloader, or require an explicit `Algorithm` or `Architecture` reading route for a bare PDF; never infer it from the paper;
+2. reuse an existing `Inbox/xxx/xxx.pdf` folder and prefix, or choose `xxx` only for a bare PDF;
 3. place or reuse the PDF at `Inbox/xxx/xxx.pdf`;
-4. extract text to `Inbox/xxx/xxx.txt`;
-5. extract candidate figures/tables to a temporary `Inbox/xxx/pdffigures2/`;
-6. copy only selected figures/tables into `Inbox/xxx/Figure/`;
-7. write the first draft to both `xxx-naive.md` and `xxx.md`;
-8. delete temporary extraction outputs before handoff.
+4. preserve or write the normalized user reading route at `Inbox/xxx/route.txt`;
+5. extract text to `Inbox/xxx/xxx.txt`;
+6. extract candidate figures/tables to a temporary `Inbox/xxx/pdffigures2/`;
+7. copy only selected figures/tables into `Inbox/xxx/Figure/`;
+8. write the first draft to both `xxx-naive.md` and `xxx.md`;
+9. delete temporary extraction outputs before handoff.
 
 The result should be:
 
@@ -50,6 +54,7 @@ Inbox/xxx/
   xxx-naive.md
   xxx.pdf
   xxx.txt
+  route.txt
   Figure/
     xxx-1.png
 ```
@@ -63,6 +68,7 @@ The reader should:
 - edit `xxx.md` directly;
 - leave `xxx-naive.md` unchanged;
 - use `xxx.txt` or `xxx.pdf` for source verification;
+- read the reading route only from `route.txt` and stop for missing or invalid content;
 - preserve figures and their `Figure/xxx-N.ext` references;
 - compare `xxx-naive.md` and `xxx.md` during final diff review when asked.
 
@@ -94,13 +100,14 @@ The plugin removes review artifacts:
 ```text
 Inbox/xxx/xxx-naive.md
 Inbox/xxx/xxx.txt
+Inbox/xxx/route.txt
 ```
 
 It also removes unreferenced temporary files and cleans up empty Inbox directories when possible.
 
 ## Boundary
 
-Before archive, `xxx-naive.md` and `xxx.txt` are useful and should remain available.
+Before archive, `xxx-naive.md`, `xxx.txt`, and `route.txt` are useful and should remain available.
 
 After archive, the knowledge base should keep only:
 

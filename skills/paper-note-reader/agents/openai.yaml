@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper Note Reader"
   short_description: "Read, discuss, and refine routed paper notes"
-  default_prompt: "Use $paper-note-reader to continue reading this Algorithm or Architecture note, discuss source-grounded explanations and broader interpretations with me, and write accepted clarifications or interpretations into xxx.md when I ask."
+  default_prompt: "Use $paper-note-reader to read the route only from route.txt, continue discussing this paper note with me, and write accepted clarifications or interpretations into xxx.md when I ask."

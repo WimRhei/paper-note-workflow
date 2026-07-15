@@ -22,26 +22,27 @@ Use `paper-downloader` to prepare the PDF at the stable Inbox entry point:
 ```text
 论文阅读/Inbox/xxx/
   xxx.pdf
+  route.txt
 ```
 
-Routing policy:
+Download sources (`source route`):
 
 - arXiv: download the PDF directly.
 - IEEE: use browser institutional access when needed.
 - ACM: do not automate by default. ACM Digital Library has unstable Cloudflare and reader/download behavior, so the user downloads the PDF manually; the skill then locates, moves, and verifies the local PDF.
 
-`paper-downloader` only creates or fills `xxx.pdf`. It does not create notes, extracted text, or figures.
+When invoking `paper-downloader`, the user also supplies the `Algorithm` or `Architecture` reading route. The downloader never infers it from the paper; after verifying the PDF, it writes the normalized value to `route.txt`. It creates or fills only `xxx.pdf` and `route.txt`, not notes, extracted text, or figures.
 
 ### 1. Draft
 
 Use `paper-note-drafter` on a PDF. It extracts text, extracts candidate figures/tables, writes a first draft, and prepares an Obsidian Inbox folder.
 
-After reading the paper, the drafter makes one routing decision:
+There are two reading routes. The drafter must not infer, verify, or override either from the paper:
 
 - `Algorithm`: the main contribution is a model, method, training objective, inference workflow, task formulation, data construction method, or decoding strategy. The note records source-supported facts that affect inference efficiency and does not infer unreported conclusions.
 - `Architecture`: the main contribution is architecture, hardware, systems, compilation, scheduling, deployment, accelerator design, memory/interconnect, quantization implementation, or hardware-software co-design. Co-design papers use this route and retain the existing architecture reading method.
 
-Only the matching schema/template pair is loaded after routing:
+If the downloader already produced a valid `route.txt`, the drafter inherits it. For a manually downloaded bare PDF without that file, the user supplies the reading route when invoking the drafter, which then writes `route.txt`. If the current instruction conflicts with the file, or both are missing, the drafter stops and asks. It then loads only the matching schema/template pair:
 
 ```text
 Algorithm
@@ -61,6 +62,7 @@ Inbox/xxx/
   xxx-naive.md
   xxx.pdf
   xxx.txt
+  route.txt
   Figure/
     xxx-1.png
     xxx-2.png
@@ -71,6 +73,7 @@ File roles:
 - `xxx.md`: the working note. This is the note the user edits and the archiver eventually keeps.
 - `xxx-naive.md`: the first generated draft. Keep it through review so `paper-note-reader` can compare it with the edited note.
 - `xxx.txt`: text extracted from the PDF. Keep it through review so the reader can verify claims against the source.
+- `route.txt`: the user-selected reading route. It contains only `Algorithm` or `Architecture`, and is the reader's only reading-route source.
 - `xxx.pdf`: the original paper PDF.
 - `Figure/`: only the figures or tables actually referenced by `xxx.md`.
 
@@ -86,10 +89,11 @@ It works inside `Inbox/xxx/`:
 - uses `xxx.txt` or `xxx.pdf` when verification is needed;
 - preserves `xxx-naive.md` as the baseline;
 - can compare `xxx-naive.md` and `xxx.md` during final diff review.
+- reads the reading route from `route.txt`; if the file is missing or invalid, it stops and asks instead of inferring from the paper.
 
 At the end of this stage, `xxx.md` is the final reviewed note.
 
-The reader uses the same Algorithm / Architecture route as the drafter. Model-written explanations must be supported by the paper, figures, or experiments. The user may ask to preserve personal interpretations they explicitly provide, but the model must not originate new inspiration, opportunities, boundaries, or cross-paper analogies. Final diff review identifies the route first and updates only the matching schema/template.
+The reader strictly inherits the reading route recorded in `route.txt` and never reclassifies the paper. Explanations of the paper must be supported by its text, figures, or experiments. During discussion, the model and user may develop personal interpretations, architecture inspiration, optimization opportunities, applicability boundaries, and cross-paper analogies. They are written normally into `xxx.md` only when the user asks, without extra labeling. Final diff review updates only the schema/template for the recorded reading route.
 
 ### 3. Archive
 
@@ -117,6 +121,7 @@ Archive cleanup:
 
 - removes `Inbox/xxx/xxx-naive.md`;
 - removes `Inbox/xxx/xxx.txt`;
+- removes `Inbox/xxx/route.txt`;
 - removes unreferenced temporary files;
 - removes the emptied `Inbox/xxx/` folder when possible.
 
@@ -132,14 +137,17 @@ Inbox/xxx/
   xxx-naive.md      # review-only first draft baseline
   xxx.pdf           # original paper
   xxx.txt           # review-only extracted text
+  route.txt         # review-only user-selected reading route
   Figure/           # figures referenced by xxx.md
 ```
 
 Rules:
 
-- The folder name, Markdown name, PDF name, and text name should share the same `xxx` prefix.
+- If a PDF already follows `Inbox/xxx/xxx.pdf`, its folder and prefix are authoritative; the drafter names only bare PDFs.
+- The folder name, Markdown name, PDF name, and extracted-text name should share the same `xxx` prefix.
+- `route.txt` contains only `Algorithm` or `Architecture`.
 - Markdown should reference figures as `Figure/xxx-N.ext`.
-- `xxx-naive.md` and `xxx.txt` are useful before archive, but are intentionally not preserved after archive.
+- `xxx-naive.md`, `xxx.txt`, and `route.txt` are useful before archive, but are intentionally not preserved after archive.
 - `pdffigures2/`, raw crops, and extraction metadata are temporary implementation details.
 
 See [docs/workflow.md](docs/workflow.md) and [docs/inbox-contract.md](docs/inbox-contract.md) for the longer version.
@@ -161,6 +169,13 @@ ln -s "$PWD/skills/paper-note-drafter" "$HOME/.codex/skills/paper-note-drafter"
 ln -s "$PWD/skills/paper-note-reader" "$HOME/.codex/skills/paper-note-reader"
 ln -s "$PWD/skills/paper-downloader" "$HOME/.codex/skills/paper-downloader"
 ```
+
+### Repository And Local Copies
+
+- Repository skills are the portable source of truth and must not contain personal absolute paths or machine-specific tool locations.
+- For copied installations rather than symlinks, local copies may preserve only two machine-specific overrides: the default absolute Inbox path and local tool fallback/setup instructions.
+- Workflow, source-route behavior, reading-route behavior, schemas/templates, and file contracts should sync from the repository while preserving those local overrides.
+- Never copy local absolute paths or tool packaging back into the repository version.
 
 To use the IEEE automation route in `paper-downloader`, also prepare the browser state:
 

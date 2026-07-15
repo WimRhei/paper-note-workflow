@@ -10,6 +10,7 @@ Inbox/xxx/
   xxx-naive.md
   xxx.pdf
   xxx.txt
+  route.txt
   Figure/
     xxx-1.png
     xxx-2.png
@@ -17,14 +18,19 @@ Inbox/xxx/
 
 `xxx` should be a short paper, system, method, or artifact name. Avoid spaces when possible.
 
+If the input already follows `Inbox/xxx/xxx.pdf`, that folder and prefix are authoritative. `paper-note-drafter` chooses a new `xxx` only for a bare PDF outside this handoff shape.
+
 ## Required Files
 
-Before drafting, `paper-downloader` may create only:
+Before drafting, `paper-downloader` creates only:
 
 ```text
 Inbox/xxx/
   xxx.pdf
+  route.txt
 ```
+
+If the user manually supplies a bare PDF without using `paper-downloader`, `route.txt` may be absent initially; `paper-note-drafter` then requires the user-selected reading route and creates the file before reading the paper.
 
 After drafting, the complete review folder is:
 
@@ -43,6 +49,10 @@ The source paper. It is prepared by `paper-downloader`, consumed by `paper-note-
 `xxx.txt`
 
 Text extracted from the PDF. It is used for source verification during drafting and reading. It is deleted by the archiver.
+
+`route.txt`
+
+The user-selected reading route. It contains exactly `Algorithm` or `Architecture`; `paper-note-reader` must use it without reclassifying the paper. It is deleted by the archiver.
 
 `Figure/`
 
@@ -95,4 +105,5 @@ Not preserved after archive:
 ```text
 xxx-naive.md
 xxx.txt
+route.txt
 ```
