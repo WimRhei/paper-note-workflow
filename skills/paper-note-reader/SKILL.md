@@ -17,12 +17,14 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
 - Keep edits surgical: rewrite the passage under discussion or add short parenthetical explanations. Write personal interpretation into the note only when the user asks to preserve it.
 - During discussion, the model may develop architecture inspiration, optimization opportunities, applicability boundaries, cross-paper analogies, or other personal interpretations with the user. Do not write them into `xxx.md` unless the user asks.
 
-## Route Contract
+## Reading Route Contract
 
-- Use the same two routes as `paper-note-drafter`: `Algorithm` or `Architecture`; co-design papers are `Architecture`.
-- Identify the existing note's route before route-sensitive revision or final diff review.
-- Read only the matching drafter schema/template when route context is needed. Do not load both routes.
-- Keep explanations of the paper source-supported for both routes. Personal understanding may also be developed interactively during `paper-note-reader` discussion.
+- Read `Inbox/xxx/route.txt` before any reading-route-sensitive revision or final diff review.
+- Accept only the exact file content `Algorithm` or `Architecture` after trimming the trailing newline.
+- Treat `route.txt` as the only reading-route authority. Never infer, verify, or override the reading route from `xxx.md`, `xxx.txt`, the PDF, or the paper topic.
+- If `route.txt` is missing or invalid, stop and ask the user to provide the reading route; do not guess.
+- Read only the matching drafter schema/template when reading-route context is needed. Do not load both reading routes.
+- Keep explanations of the paper source-supported for both reading routes. Personal understanding may also be developed interactively during `paper-note-reader` discussion.
 
 ## Reading Workflow
 
@@ -30,11 +32,13 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
    - `xxx.md`: current working note.
    - `xxx-naive.md`: first draft baseline.
    - `xxx.txt`: extracted paper text for verification.
+   - `route.txt`: user-selected `Algorithm` or `Architecture` reading route.
    - `Figure/`: referenced figures.
-2. When the user asks what a passage means, answer in plain language first.
-3. If the user approves or asks to write it down, compress the explanation into the note.
-4. If the passage involves a figure/table, preserve the figure's role: what question it answers, key numbers, and the conclusion.
-5. If the user asks to preserve a personal or cross-domain interpretation supplied by the user or developed during discussion, write it normally into `xxx.md` near the relevant passage. Do not create a separate note.
+2. Read and validate `route.txt`; load only the matching drafter schema/template if reading-route context is needed.
+3. When the user asks what a passage means, answer in plain language first.
+4. If the user approves or asks to write it down, compress the explanation into the note.
+5. If the passage involves a figure/table, preserve the figure's role: what question it answers, key numbers, and the conclusion.
+6. If the user asks to preserve a personal or cross-domain interpretation supplied by the user or developed during discussion, write it normally into `xxx.md` near the relevant passage. Do not create a separate note.
 
 ## What To Look At During Follow-Up Reading
 
@@ -58,7 +62,7 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
 
 When the user asks for final diff optimization:
 
-1. Route the paper as `Algorithm` or `Architecture` using the drafter contract.
+1. Read the existing reading route from `route.txt`; do not reclassify the paper.
 2. Compare `xxx-naive.md` and `xxx.md`.
 3. Separate changes into:
    - expression cleanup;
@@ -66,11 +70,11 @@ When the user asks for final diff optimization:
    - structural change;
    - personal or cross-domain interpretation preserved from the discussion;
    - possible general lesson for `paper-note-drafter`.
-4. Do not update `paper-note-drafter` directly. If a lesson seems general, state the drafting problem, selected route, target file/section, and proposed rule, then wait for user confirmation.
+4. Do not update `paper-note-drafter` directly. If a lesson seems general, state the drafting problem, selected reading route, target file/section, and proposed rule, then wait for user confirmation.
 5. After confirmation, update only the file that owns that rule:
    - workflow/process rules -> `../paper-note-drafter/SKILL.md`;
    - Algorithm writing judgment -> `../paper-note-drafter/references/algorithm-paper-schema.md`;
    - Algorithm note body structure -> `../paper-note-drafter/references/algorithm-paper-template.md`;
    - Architecture writing judgment -> `../paper-note-drafter/references/architecture-paper-schema.md`;
    - Architecture note body structure -> `../paper-note-drafter/references/architecture-paper-template.md`.
-6. Never modify the other route's schema/template from this diff review.
+6. Never modify the other reading route's schema/template from this diff review.

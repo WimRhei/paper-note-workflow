@@ -1,6 +1,6 @@
-# IEEE Download Route
+# IEEE Source Route
 
-Use this route for IEEE Xplore documents or when the user explicitly asks for the IEEE copy.
+Use this source route for IEEE Xplore documents or when the user explicitly asks for the IEEE copy.
 
 ## Prerequisites
 
@@ -91,7 +91,7 @@ Use browser-controlled media/download APIs on that iframe or PDF element.
 After download, wait for `.crdownload` to disappear, then save to:
 
 ```text
-/Users/wimrhei/arch-research/论文阅读/Inbox/xxx/xxx.pdf
+<inbox-root>/xxx/xxx.pdf
 ```
 
 Verify with `file` and `pdfinfo`.

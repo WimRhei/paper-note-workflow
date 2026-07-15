@@ -89,7 +89,7 @@ var require_archiver = __commonJS({
         if (filePath === mdPath) continue;
         const basename = filePath.split("/").pop();
         const ext = (basename.split(".").pop() || "").toLowerCase();
-        if (basename === `${paperName}-naive.md` || basename === `${paperName}.txt`) {
+        if (basename === `${paperName}-naive.md` || basename === `${paperName}.txt` || basename === "route.txt") {
           unreferenced.push(filePath);
           continue;
         }

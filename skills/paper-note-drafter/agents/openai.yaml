@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper Note Drafter"
-  short_description: "Draft routed algorithm or architecture paper notes from PDFs."
-  default_prompt: "Draft a structured Chinese paper note from this PDF using the matching Algorithm or Architecture schema and template."
+  short_description: "Draft using the user-selected reading route"
+  default_prompt: "Use $paper-note-drafter with the reading route already recorded in route.txt, or with the explicit Algorithm or Architecture route I provide for a bare PDF. Never infer it from the paper."

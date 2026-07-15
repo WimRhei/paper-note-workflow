@@ -1,95 +1,74 @@
 # 算法论文 Schema
 
-这份 schema 面向体系结构研究者阅读算法论文。它从上到下还原推理 workload 和执行链路，只记录原文支持的信息；缺失但重要的信息写 `未报告` 或 `FIX: info`。
+面向体系结构研究者，以最短结构还原算法的模块层次、推理执行和 workload。只记录原文支持的信息；缺失但重要的信息写 `未报告` 或 `FIX: info`。
 
-不要补写原文之外的体系结构启发、优化机会、适用边界或瓶颈判断。原文未明确指出计算热点时，只记录 workflow 中可直接确认的高频调用模块。
+不要补写原文之外的体系结构启发、优化机会或瓶颈判断。原文未明确指出计算热点时，只记录执行链路中可确认的高频调用模块。
+
+## 写作原则
+
+- 先建立层次，再写正文。区分系统级组件、模型内部组件、训练期辅助模块、推理调度和部署优化；不同层级不得放进同一并列表。
+- 每条信息只设一个归属位置。不要在任务、模型、workflow、效率、机制和结果中重复同一事实。
+- 标题服从论文的技术逻辑。模板栏目可以改名、合并或省略，不为填满模板增加内容。
+- 使用最小充分表述。优先用一个短句写清对象、作用和关键数字；删除固定套话和不影响理解的配置。
+- 沿用论文自己的机制名称。原文没有命名时，直接写输入、预测对象和监督目标，不自行概括成新的 consistency、alignment、cycle、grounding、planning 或 reasoning 机制。
+- 表格只用于需要逐项对齐的比较、映射或尺度关系。层次用嵌套列表，执行顺序用流程表示。
 
 ## 私有逻辑链
 
-正式写笔记前，先在心里回答这些问题；不需要逐项写进最终笔记：
+正式写笔记前，先在心里回答；不要逐项抄入正文：
 
 ```text
-论文研究的任务是什么？
-推理时输入、输出和调用形态是什么？
-原始或目标推理 workflow 如何运行？
-主干模型和附加模块分别是什么，规模是多少？
-token / tensor / latent / state 的种类和数量由什么决定？
-一次推理要调用哪些模块、多少次，哪些步骤必须串行等待？
-原文明确指出的计算、memory、bandwidth、cache 或同步开销在哪里？
-原文给了哪些精度、压缩、并行、异步或实现配置？
-训练方法是否改变了推理时的结构、调用次数、state、质量或效率？
-实验里哪些指标是质量，哪些指标是效率？硬件平台和推理设置是什么？
-哪些影响推理效率的关键信息原文没有报告？
+任务边界、输入、输出和调用形态是什么？
+系统由哪些层级组成？每个模块的父级和职责是什么？
+哪些对象只存在于训练、推理调度或部署，而不是模型静态结构？
+推理按什么顺序执行？每阶段调用什么、多少次、等待什么？
+token / tensor / latent / state 的尺度由什么决定，哪些会跨步骤复用？
+重复 forward、cache、memory、bandwidth、同步和并行发生在哪里？
+精度、压缩、搜索、采样或调度如何改变真实 workload？
+哪些质量或效率数字支撑结论？必要配置和硬件是否报告？
+每条保留信息应归入哪一节，是否已在别处出现？
 ```
 
-## 任务与调用形态
+## 提取检查表
 
-- 任务是什么。
-- 输入模态、输入长度、分辨率、帧数、上下文窗口。
-- 输出类型、输出长度、horizon、chunk size。
-- 调用形态：单次推理、多轮交互、流式生成、闭环控制、agent loop、batch serving。
+以下内容用于检查覆盖面，不直接映射为正文标题。
 
-## 模型静态结构
+### 系统边界与模块层次
 
-- 主干模型类型。
-- 参数量、层数、hidden size、head 数、expert 数。
-- encoder、decoder、head、adapter、VAE、retriever、planner、controller 等附加模块。
-- dense / sparse、single-stream / multi-stream、cascade / multi-stage 等结构。
+- 任务、输入、输出、上下文和调用形态。
+- 主干模型、附加模块及其父子关系。
+- 参数量、层数、hidden size、head、expert，以及 dense / sparse、single-stream / multi-stream、cascade / multi-stage 等结构。
+- 明确区分模型组件、训练期分支、推理调度和部署实现。
 
-## Token / Tensor / State 画像
+### 数据、状态与执行
 
-- token 或 latent 种类：text、vision、video、audio、action、memory、query、retrieval。
-- token 数量如何由输入尺寸、patch、frame、context、candidate、beam 等决定。
-- 推理时保留的状态：KV cache、latent state、hidden state、external memory、history buffer。
-- 哪些状态跨 step、跨 token、跨轮、跨 request 复用。
+- token、tensor、latent、action、memory、query 等单位及数量来源。
+- 输入预处理、编码、主干 forward、采样或搜索、解码、后处理的真实顺序。
+- autoregressive、diffusion/flow、beam/search、planner-controller 或 agent loop 的循环与串行依赖。
+- KV cache、latent state、history buffer、external memory 的容量、更新和复用范围。
 
-## 推理执行链路
+### 调用与开销
 
-- 输入预处理、编码、主干 forward、采样/搜索、解码、后处理的顺序。
-- 是否存在 autoregressive decode、diffusion/flow denoise、beam/search、self-consistency、planner-controller loop、agent loop。
-- 每个阶段调用哪个模块，调用多少次，哪些步骤必须串行等待。
+- 区分一次任务、一次循环、一次采样和一次实际 forward；记录 denoise/decode steps、candidate、beam、rollout 或 tool-call 次数。
+- 检查 CFG、multi-sample、rerank、retry、ensemble、reflection 等重复计算。
+- 记录原文明确指出的 attention、MLP、decoder、sampling、memory、bandwidth、cache 或同步开销。
+- 记录精度、量化、剪枝、蒸馏、并行、异步和实现配置，以及它们改变的执行阶段。
 
-## 调用次数与重复计算
+### 实验与边界
 
-- denoise steps、decode steps、rollout 次数、candidate 数、beam width、tool call 轮数。
-- CFG、multi-sample、rerank、retry、ensemble、reflection 等导致的重复 forward。
-- 原文是否提供减少重复计算的方法。
-
-## 计算热点
-
-- 原文明确指出的开销来源：attention、MLP、cross-attention、convolution、VAE、retrieval、reranker、decoder、sampling。
-- 原文未明确指出时，只记录 workflow 中可直接确认的高频调用模块，不自行判断瓶颈。
-
-## Memory / Bandwidth / Cache
-
-- KV cache、activation、latent、retrieval index、history buffer、external memory。
-- 显存占用、带宽、上下文长度上限、cache 复用、cache eviction、state compression。
-- 原文未报告则写 `未报告`。
-
-## 数值精度与压缩
-
-- 推理精度：FP32、BF16、FP16、FP8、INT8、INT4、NF4、NVFP4 等。
-- 压缩对象：weight、activation、KV cache、embedding、attention、MLP、latent、token。
-- 压缩方法：quantization、pruning、distillation、low-rank、token pruning、frame dropping。
-- 区分论文方法本身和实验实现配置。
-
-## 并行性与调度
-
-- batch、pipeline、tensor/model parallel、expert parallel。
-- 阶段重叠、异步执行、streaming、speculative execution。
-- 串行依赖和同步点。
-- 只记录原文明确给出的策略或配置。
-
-## 推理实验配置与指标
-
-- 硬件平台、卡数、内存、软件栈。
-- batch size、sequence length、resolution、frame count、sampling steps、temperature、top-k/top-p。
-- 效率指标：latency、throughput、tokens/s、FPS、Hz、memory、energy、cost。
-- 质量指标单独记录，不和效率指标混写。
+- 分开记录质量指标和效率指标，并保留理解结果所需的最小实验口径。
+- 保留影响 workload 判断的硬件、batch、长度、分辨率、采样参数和软件栈；未报告时明确指出。
+- 从多个原文事实计算出的换算或结论必须标明为推算，不写成原文直接结论。
 
 ## 图表记录规则
 
-- 只嵌入支撑任务形态、模型结构、推理 workflow、关键机制和实验结果的图表。
-- 图表必须靠近它服务的文字，并说明它回答了原文中的什么问题、支撑了哪条原文信息。
+- 只要原文提供合适视觉证据，正文至少覆盖三种角色：模型或系统总览图、关键机制或执行流程图、主结果图表。三者回答不同问题，不因已有文字树或数字摘要而省略。
+- 每种角色选择信息密度最高的一张。只有一张图确实同时承载多个角色时才允许复用；不要用固定数量的低价值图片凑数。
+- 模型图用于模块连接、条件注入和数据流；嵌套列表用于父子层次，二者不能互相替代。
+- 关键机制图用于循环、状态变化、并发、时序或关键变换；正文必须逐项核对其中影响执行链和 workload 的模块、重复调用、状态更新与依赖。
+- 主结果图表用于呈现论文最重要的质量或效率结论及其比较关系。即使正文保留关键数字，也应保留最能支撑主结论的原始图表。
+- 原文缺少某一角色的合适视觉证据时，明确记录缺失；不要嵌入无关图片代替。
+- 图表靠近其证据位置；在图前用一句话说明它回答的问题，图后不再重复标题、正文或执行链。
 - 不根据图表补写作者没有明确陈述的瓶颈或体系结构结论。
-- 如果提取工具漏掉关键图，在应该嵌图的位置写 `FIX: 手工嵌入 Figure/Table N`。
+- 图表与正文出现不一致时，回查正文、图注和上下文；无法消解时明确记录歧义，不得静默忽略图中的步骤或模块。
+- 提取遗漏必要图表时，在对应位置写 `FIX: 手工嵌入 Figure/Table N`。

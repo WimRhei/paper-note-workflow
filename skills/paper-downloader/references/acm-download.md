@@ -1,6 +1,6 @@
-# ACM Manual Handoff Route
+# ACM Manual Source Route
 
-Use this route for ACM Digital Library papers.
+Use this source route for ACM Digital Library papers.
 
 ## Boundary
 
@@ -31,7 +31,7 @@ pdfinfo <candidate.pdf>
 5. Save to the local paper workflow:
 
 ```text
-/Users/wimrhei/arch-research/论文阅读/Inbox/xxx/xxx.pdf
+<inbox-root>/xxx/xxx.pdf
 ```
 
 6. Report the final path and verification result.
