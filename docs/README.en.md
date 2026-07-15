@@ -7,7 +7,7 @@ An opinionated paper-reading workflow for Codex and Obsidian.
 This repository contains:
 
 - `paper-downloader`: a Codex skill that prepares PDFs in the Inbox. It can automate arXiv/IEEE when appropriate; ACM is manual-download handoff only.
-- `paper-note-drafter`: a Codex skill that turns a paper PDF into a reviewable Chinese Markdown note.
+- `paper-note-drafter`: a Codex skill that turns a paper PDF into a reviewable Chinese Markdown note, with isolated schemas and templates for algorithm and architecture papers.
 - `paper-note-reader`: a Codex skill for follow-up reading, note revision, source verification, and final diff review.
 - `paper-archiver`: an Obsidian plugin that archives a reviewed Inbox paper folder into a topic folder.
 
@@ -35,6 +35,23 @@ Routing policy:
 ### 1. Draft
 
 Use `paper-note-drafter` on a PDF. It extracts text, extracts candidate figures/tables, writes a first draft, and prepares an Obsidian Inbox folder.
+
+After reading the paper, the drafter makes one routing decision:
+
+- `Algorithm`: the main contribution is a model, method, training objective, inference workflow, task formulation, data construction method, or decoding strategy. The note records source-supported facts that affect inference efficiency and does not infer unreported conclusions.
+- `Architecture`: the main contribution is architecture, hardware, systems, compilation, scheduling, deployment, accelerator design, memory/interconnect, quantization implementation, or hardware-software co-design. Co-design papers use this route and retain the existing architecture reading method.
+
+Only the matching schema/template pair is loaded after routing:
+
+```text
+Algorithm
+  -> references/algorithm-paper-schema.md
+  -> references/algorithm-paper-template.md
+
+Architecture
+  -> references/architecture-paper-schema.md
+  -> references/architecture-paper-template.md
+```
 
 Expected draft output:
 
@@ -71,6 +88,8 @@ It works inside `Inbox/xxx/`:
 - can compare `xxx-naive.md` and `xxx.md` during final diff review.
 
 At the end of this stage, `xxx.md` is the final reviewed note.
+
+The reader uses the same Algorithm / Architecture route as the drafter. Model-written explanations must be supported by the paper, figures, or experiments. The user may ask to preserve personal interpretations they explicitly provide, but the model must not originate new inspiration, opportunities, boundaries, or cross-paper analogies. Final diff review identifies the route first and updates only the matching schema/template.
 
 ### 3. Archive
 
@@ -198,6 +217,12 @@ CONTRIBUTORS.md
 skills/
   paper-downloader/
   paper-note-drafter/
+    SKILL.md
+    references/
+      algorithm-paper-schema.md
+      algorithm-paper-template.md
+      architecture-paper-schema.md
+      architecture-paper-template.md
   paper-note-reader/
 obsidian-plugins/
   paper-archiver/

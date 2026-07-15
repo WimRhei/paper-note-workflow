@@ -4,3 +4,4 @@ dist/
 dist-release/
 .gh-update-*.json
 *.log
+.DS_Store

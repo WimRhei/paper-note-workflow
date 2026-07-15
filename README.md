@@ -7,7 +7,7 @@
 这个仓库包含：
 
 - `paper-downloader`：Codex skill，把论文 PDF 准备到 Inbox；arXiv/IEEE 可自动化，ACM 只做人工下载后的归档验证。
-- `paper-note-drafter`：Codex skill，从论文 PDF 草拟中文 Markdown 笔记。
+- `paper-note-drafter`：Codex skill，从论文 PDF 草拟中文 Markdown 笔记；算法论文和体系结构论文使用相互独立的阅读 schema 与笔记 template。
 - `paper-note-reader`：Codex skill，用于后续阅读、修订、查证原文和最终 diff review。
 - `paper-archiver`：Obsidian 插件，把 review 完成的 Inbox 论文文件夹归档到主题目录。
 
@@ -35,6 +35,23 @@
 ### 1. 草拟
 
 对论文 PDF 使用 `paper-note-drafter`。它会抽取正文、抽取候选图表、写第一版笔记，并准备 Obsidian Inbox 文件夹。
+
+读完正文后，drafter 只做二分类：
+
+- `Algorithm`：主要贡献是模型、方法、训练目标、推理流程、任务 formulation、数据构造或解码策略。按体系结构研究者的算法读法，忠实提取原文中影响推理效率的信息；原文未报告的信息不自行推断。
+- `Architecture`：主要贡献是体系结构、硬件、系统、编译、调度、部署、加速器、存储、互联、量化实现或软硬件协同设计。协同设计归入这一类，并继续使用原有体系结构阅读方式。
+
+路由完成后只加载对应的一对文件，不把另一类论文的 schema/template 带入上下文：
+
+```text
+Algorithm
+  -> references/algorithm-paper-schema.md
+  -> references/algorithm-paper-template.md
+
+Architecture
+  -> references/architecture-paper-schema.md
+  -> references/architecture-paper-template.md
+```
 
 期望输出：
 
@@ -71,6 +88,8 @@ Inbox/xxx/
 - 用户要求最终 diff review 时，对比 `xxx-naive.md` 和 `xxx.md`。
 
 这个阶段结束时，`xxx.md` 就是最终 review 后的笔记。
+
+reader 与 drafter 使用同一套 Algorithm / Architecture 路由。模型写入的解释必须有原文、图表或实验支持；用户可以要求保存自己明确提出的个人理解，但模型不能自行生成启发、机会、边界或跨论文类比。最终 diff review 先确认论文路由，再只修改对应的 schema/template。
 
 ### 3. 归档
 
@@ -198,6 +217,12 @@ CONTRIBUTORS.md
 skills/
   paper-downloader/
   paper-note-drafter/
+    SKILL.md
+    references/
+      algorithm-paper-schema.md
+      algorithm-paper-template.md
+      architecture-paper-schema.md
+      architecture-paper-template.md
   paper-note-reader/
 obsidian-plugins/
   paper-archiver/

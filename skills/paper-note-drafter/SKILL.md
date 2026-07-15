@@ -1,6 +1,6 @@
 ---
 name: paper-note-drafter
-description: Draft Chinese research paper notes from PDFs by reconstructing the paper's technical logic, mechanism, hardware/system dataflow, and key experiments. Use when the user asks to read a paper, extract PDF text or figures, create a literature note, or generate an Obsidian-style paper note from a PDF.
+description: Draft Chinese research paper notes from PDFs using separate Algorithm and Architecture reading routes, schemas, and templates. Use when the user asks to read an algorithm, model, architecture, hardware, system, or co-design paper; extract PDF text or figures; create a literature note; or generate an Obsidian-style paper note from a PDF.
 ---
 
 # Paper Note Drafter
@@ -9,17 +9,17 @@ description: Draft Chinese research paper notes from PDFs by reconstructing the 
 
 Turn a paper PDF into a reviewable Chinese Markdown note that can be archived by the local Obsidian `paper-archiver` plugin. Extract plain text first, infer which figures and tables matter from the text, extract figures/tables separately, then cross-check the note against both sources.
 
-The note is not a paper-summary form. Its job is to reconstruct the paper's technical logic in the shortest structure that makes the mechanism understandable: what problem blocks the target metric, what essential abstraction or insight unlocks the design, what each layer of the solution changes, how data/control actually flows, which experiments prove the chain, and what transferable research lesson remains after reading.
+The note is not a paper-summary form. Its job is to reconstruct the paper's technical logic in the shortest structure that makes the mechanism understandable. The selected route's schema defines what logic to extract and how to organize it.
 
-The note should support an iterative reading workflow: draft a first note from the paper, let the user read and challenge it, then revise the note to preserve the sharper understanding. Do not overfit the skill to one paper's quirks; use each revision to improve how the note captures essence, abstraction, mechanism, evidence, and transferable thinking.
+This skill owns first-draft generation. After handoff, use `paper-note-reader` for explanation, revision, source verification, and final diff review.
 
 ## File Roles
 
-- `SKILL.md` is the execution orchestrator: tool setup, extraction workflow, revision workflow, and when to update the skill.
-- `references/paper-note-schema.md` is the thinking guide: what to understand, how to identify the essential abstraction, how to write mechanisms, experiments, limitations, and transferable lessons.
-- `references/paper-note-template.md` is the output contract: final Markdown skeleton, file naming, figure embedding, and Obsidian archiver compatibility.
+- `SKILL.md` is the execution orchestrator and the single source of truth for the shared Inbox, file naming, figure naming, and cleanup contract.
+- `references/algorithm-paper-schema.md` and `references/algorithm-paper-template.md` define only the Algorithm reading logic and note body structure.
+- `references/architecture-paper-schema.md` and `references/architecture-paper-template.md` define only the Architecture reading logic and note body structure.
 
-Before drafting, read both reference files and follow their division of labor. Do not duplicate or override reference rules in ad hoc prose unless the user explicitly asks for a different format.
+After routing the paper, read only the matching schema/template pair. Do not load the other route's reference files into context. Do not duplicate or override reference rules in ad hoc prose unless the user explicitly asks for a different format.
 
 ## Tool Requirements
 
@@ -34,7 +34,7 @@ This skill is intentionally OS-agnostic at runtime. The repository does not bund
 
 ## Output Contract
 
-The final note must satisfy the local Obsidian `paper-archiver` format. Do not restate the rules from memory; read and follow `references/paper-note-template.md` for folder layout, file naming, figure paths, and final `xxx.md` promotion.
+The final note must satisfy the local Obsidian `paper-archiver` format. This section is the shared output contract for both routes; route templates must not duplicate it.
 
 The required handoff directory is intentionally clean. The final `Inbox/xxx/` folder must contain only:
 
@@ -53,15 +53,25 @@ Temporary extraction outputs such as `pdffigures2/data-xxx.json`, `pdffigures2/s
 
 `xxx-naive.md` and `xxx.txt` are pre-archive review artifacts: `paper-note-reader` uses them for diff review and source verification. The local `paper-archiver` removes both during archive, so the archived paper keeps only the final `xxx.md`, `PDF/xxx.pdf`, and referenced `Figure/xxx-N.ext` files.
 
+Apply these naming and placement rules:
+
+- Use the paper's core concept, system, method, or artifact name as the shared `xxx` prefix; keep it short, avoid spaces, and use `-` only when needed.
+- Keep `xxx.md`, `xxx-naive.md`, `xxx.pdf`, and `xxx.txt` in `Inbox/xxx/`.
+- Put only figures and tables actually referenced by the note in `Inbox/xxx/Figure/`.
+- Name embedded files `xxx-N.ext`, where `N` starts at 1 and follows first appearance in the note. Do not use the paper's Figure/Table number as the filename number.
+- Preserve the paper's original `Figure N`, `Fig. N`, or `Table N` in the Markdown alt text.
+- Reference only `Figure/xxx-N.ext` from Markdown. Never reference `pdffigures2/`, `extracted/`, or raw `img-*` paths.
+- Place each figure/table next to the passage it supports and state the source question it answers. Do not collect figures at the end.
+- If extraction misses a required item, write `FIX: 手工嵌入 Figure/Table N` where it belongs.
+- Before handoff, remove `pdffigures2/`, raw crops, metadata JSON, stats files, unreferenced figures, and empty temporary directories.
+
 ## Workflow
 
 Run the tools as separate steps.
 
 1. Determine the final Obsidian archive name `xxx`.
    - Use the paper's proposed concept/system/method/artifact name.
-   - Prepare the folder, PDF, Markdown, and figure paths according to `references/paper-note-template.md`.
-   - Keep the archive clean: final files are `xxx.md`, `xxx-naive.md`, `xxx.pdf`, `xxx.txt`, and `Figure/`.
-   - Do not create or preserve an `extracted/` directory in the final handoff.
+   - Prepare the folder, PDF, Markdown, and figure paths according to the Output Contract above; route-specific templates are loaded only after the paper is classified.
    - If the source PDF is already in the Inbox root, move it into `Inbox/xxx/xxx.pdf` and do not leave a duplicate in the root. If it is outside the Inbox, copy it into `Inbox/xxx/xxx.pdf` and leave the external original untouched.
 2. Extract text with `pdftotext`.
    - Prefer plain text for reading and reasoning.
@@ -69,6 +79,9 @@ Run the tools as separate steps.
    - Example: `pdftotext Inbox/xxx/xxx.pdf Inbox/xxx/xxx.txt`
 3. Read the extracted text.
    - Identify the paper type and main sections.
+   - Route the paper as either `Algorithm` or `Architecture`.
+   - Use `Algorithm` when the paper's main contribution is a model, method, training objective, inference workflow, task formulation, data construction, or decoding strategy. Algorithm notes must use the algorithm schema/template and faithfully record only source-supported facts that affect inference efficiency; write `未报告` or `FIX: info` for missing information.
+   - Use `Architecture` when the paper's main contribution is architecture, hardware, systems, compiler/runtime, scheduling, deployment, accelerator design, memory/interconnect, quantization implementation, or software-hardware co-design. Co-design papers are `Architecture` papers and continue to use the existing architecture schema/template.
    - Count or list figure/table mentions from captions and in-text references, such as `Figure 1`, `Fig. 2`, `Table 3`.
 4. Extract figures and tables with `pdffigures2`.
    - Default to `--dpi 600` for clear figure/table crops.
@@ -84,15 +97,16 @@ Run the tools as separate steps.
    - Markdown must reference only `Figure/xxx-N.ext`; never reference `pdffigures2/`, `extracted/`, or raw `img-*` paths.
    - After the note is checked and all selected figures are copied to `Figure/`, delete the entire temporary `Inbox/xxx/pdffigures2/` directory.
 6. Read the schema and template.
-   - Use [references/paper-note-schema.md](references/paper-note-schema.md).
-   - Use [references/paper-note-template.md](references/paper-note-template.md) for the final Markdown structure and strict figure/table file rules.
+   - For `Algorithm`, read only [references/algorithm-paper-schema.md](references/algorithm-paper-schema.md) and [references/algorithm-paper-template.md](references/algorithm-paper-template.md).
+   - For `Architecture`, read only [references/architecture-paper-schema.md](references/architecture-paper-schema.md) and [references/architecture-paper-template.md](references/architecture-paper-template.md).
+   - Never read both routes' reference files for the same paper.
 7. Draft the note.
    - Write Chinese Markdown.
-   - Use `references/paper-note-schema.md` for reasoning and organization; do not mechanically fill every template section.
+   - Use the selected route's schema for reasoning and organization; do not mechanically fill every template section.
    - Prefer the paper's underlying mechanism over its marketing story.
-   - Use `references/paper-note-template.md` for Markdown skeleton, figure naming, and file placement.
+   - Use the selected route's template only for the note body structure; use the Output Contract above for file and figure rules.
 8. Fill gaps carefully.
-   - Mark unknown or missing items as `FIX: info`.
+   - For Algorithm notes, mark missing source information as `未报告` or `FIX: info` according to the algorithm schema/template. For Architecture notes, preserve the existing `FIX: info` rule.
    - Do not invent facts, numbers, or results.
 9. Hand off the first draft.
    - First-generation output must include both `Inbox/xxx/xxx-naive.md` and `Inbox/xxx/xxx.md`.
@@ -100,30 +114,16 @@ Run the tools as separate steps.
    - Treat `xxx-naive.md` as the baseline draft for later comparison and skill improvement.
    - Treat `xxx.md` as the user's working/final copy. The user edits `xxx.md` directly, and `paper-archiver` archives `xxx.md`.
    - Before handoff, verify the final directory contains no `pdffigures2/`, `extracted/`, raw `img-*`, `data-*.json`, or `stats.json` files.
-
-### Revision / Learning Workflow
-
-When revising an existing note after user discussion:
-
-1. Preserve `xxx-naive.md` as the first generated baseline. Revise `xxx.md` directly; if `xxx-naive.md` is missing, recreate it before substantial revision only if the original first draft can be recovered. Keep figures and the original PDF unchanged.
-2. Compare `xxx-naive.md`, the current `xxx.md`, and the user's critique before deciding what should become the final note.
-3. Preserve useful basic facts, figures, experimental setup, and reproducibility context unless they are wrong or pure bookkeeping.
-4. Replace template-shaped sections with sharper mechanism explanations when the discussion reveals a better abstraction.
-5. Add reader-derived insights as `适用边界与思考` or an equivalent final section, but keep them general enough to transfer beyond the current paper.
-6. After the edited note is accepted, compare the diff between `xxx-naive.md` and `xxx.md` to identify process lessons. Before updating `SKILL.md`, `references/paper-note-schema.md`, or `references/paper-note-template.md`, first tell the user the diff-derived drafting problem, the target file/section, and the proposed general rule; update only after the user confirms. If the confirmed lesson improves future paper-note drafting in a general way, update the appropriate skill file before finalizing the paper note.
-7. After the skill reflection, leave the accepted edited note as `xxx.md` for archiving. Keep `xxx-naive.md` through revision unless the user asks to delete it.
-8. Keep `xxx.txt` through revision. Do not keep temporary `pdffigures2/` outputs after selected figures have been copied to `Figure/`; regenerate them from `xxx.pdf` if deeper figure inspection is needed later.
-   The archive step removes `xxx.txt` and `xxx-naive.md`; keep them until then.
-9. Do not update this skill from a single paper unless the lesson improves the drafting process across future papers.
+   - Hand the folder to `paper-note-reader` for all later reading and revision work.
 
 ## Useful Resources
 
-- `references/paper-note-schema.md`: the living schema distilled from existing notes.
-- `references/paper-note-template.md`: flexible Markdown skeletons plus strict figure/table embedding and naming rules.
+- `references/algorithm-paper-schema.md` and `references/algorithm-paper-template.md`: Algorithm-only reading and output context.
+- `references/architecture-paper-schema.md` and `references/architecture-paper-template.md`: Architecture-only reading and output context.
 
 ## Output Expectations
 
 - Produce a clean Markdown note suitable for Obsidian.
 - Include the paper's core logic, not just the abstract.
-- Produce an archiver-ready folder and final `xxx.md` according to `references/paper-note-template.md`.
-- Keep only the clean handoff files: `xxx.md`, `xxx-naive.md`, `xxx.pdf`, `xxx.txt`, and `Figure/`. Temporary `pdffigures2/` outputs must be deleted before handoff.
+- Satisfy the shared Output Contract and the selected route's schema/template.
+- Hand the clean first-draft folder to `paper-note-reader` for later revision.

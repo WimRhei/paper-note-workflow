@@ -7,7 +7,7 @@ description: Download or prepare research paper PDFs as the first step of a pape
 
 ## Overview
 
-Acquire the authorized PDF first, place it in the local paper workflow `论文阅读/Inbox`, then hand the local PDF path to `paper-note-drafter`. Prefer the user's signed-in Chrome profile over script scraping when publisher access depends on institution cookies, SSO redirects, password managers, or PDF viewer pages.
+Acquire the authorized PDF first, place it in the local paper workflow `论文阅读/Inbox`, then hand the local PDF path to `paper-note-drafter`. Select one source route and load only that route's reference file.
 
 This skill is the first stage of the paper-read workflow. It ends when a verified local PDF exists at the workflow interface path and the next note-drafting step can start.
 
@@ -39,29 +39,11 @@ Use this interface:
 - If no `Inbox` can be located, ask for the target paper workflow `Inbox` path before treating the PDF as ready for downstream drafting.
 - Only use task `outputs/` for ad hoc delivery when the user asks to download a PDF outside the paper-read workflow.
 
-## Browser Prerequisites
-
-IEEE automation depends on the user's real Chrome state, not a fresh script browser.
-
-Before using the IEEE route, the environment should have:
-
-- Google Chrome installed.
-- The Codex Chrome browser-control extension/plugin installed and enabled for the Chrome profile used by the workflow.
-- A dedicated Chrome profile, preferably named `Papers-Codex`.
-- Publisher and institution sessions prepared in that profile when possible.
-- Chrome password manager or the user's normal password manager configured by the user, if institutional login should be auto-filled.
-
-The agent should verify the available Chrome browser backends before opening publisher pages. If Chrome control is unavailable, the Chrome extension/plugin is not enabled, or the `Papers-Codex` profile cannot be reached, stop and ask the user to fix that browser setup instead of falling back to unauthenticated scraping.
-
-Do not ask the user for passwords. The allowed automation boundary is to use the already configured browser profile and click through only when credentials are already filled and the user has authorized that login action.
-
 ## Boundaries
 
 - Use normal publisher, DOI, institution, library, or open-access routes only. Do not bypass paywalls, CAPTCHAs, security interstitials, or access controls.
 - Do not read, reveal, store, or manually type passwords, OTPs, cookies, or session tokens.
 - If Chrome/password manager has already filled credentials, continue only when the user's prompt authorizes clicking the login button for that specific destination. Stop for CAPTCHA, OTP, QR login, missing password autofill, or unexpected account prompts.
-- Prefer browser-based downloading over shell `curl`/`wget` for IEEE when access depends on cookies. Shell requests usually lose the institution state.
-- Do not attempt to automate ACM downloads by default. ACM Digital Library is too unstable for this workflow because Cloudflare checks and the ACM reader/download UI can diverge across browser states.
 
 ## Workflow
 
@@ -75,30 +57,15 @@ Do not ask the user for passwords. The allowed automation boundary is to use the
      - Arxiv: use direct arXiv PDF download when the paper is on arXiv.
      - IEEE: use Chrome with institutional access when needed.
      - ACM: do not automate; ask the user to download the PDF manually, then locate, move, and verify the local PDF.
-   - For IEEE/publisher pages with institutional access, use Chrome, not the in-app browser.
-   - Prefer the dedicated `Papers-Codex` Chrome profile when available.
-   - Before browser actions, read and follow the relevant browser/Chrome skill if it is available in the session.
-3. Reuse existing authenticated state.
-   - First list Chrome browser backends and open tabs.
-   - Prefer claiming an already-open publisher tab in the `Papers-Codex` profile.
-   - Verify authorization on the visible page before assuming access. For IEEE, look for `Access provided by:` and the expected institution.
-4. If authorization is missing, run the institution flow.
-   - Use the publisher's `Institutional Sign In`, `Access Through Your Institution`, or equivalent route.
-   - If the institution is known, search/select it exactly. For the user's current IEEE setup, use `University of Chinese Academy of Sciences`.
-   - Follow the redirect back to the identity provider.
-   - If credentials are auto-filled and user has authorized submission, click login. Otherwise stop and ask the user to complete login in Chrome.
-   - After redirect back, verify the publisher page shows institutional access.
-5. Open or download the PDF.
-   - Click the publisher's `PDF` or `Download PDF` control only for routes that are still automated.
-   - If a PDF viewer page opens, prefer the browser runtime media/download API over scraping with unauthenticated shell commands.
-   - For IEEE, a successful authorized PDF page often uses `stamp/stamp.jsp?...` with an iframe pointing at `stampPDF/getPDF.jsp?...`.
-   - For ACM, stop before browser automation and use the ACM manual handoff route.
-6. Save and verify the local artifact.
+3. Read and follow only the selected route reference.
+   - Do not load the other source routes into context.
+   - Route-specific prerequisites, browser behavior, authentication flow, and download mechanics belong in that reference.
+4. Save and verify the local artifact.
    - Let Chrome download to the user's Downloads folder if needed, then move or copy the verified PDF to `论文阅读/Inbox/xxx/xxx.pdf`.
    - Do not leave the workflow result only in `~/Downloads` or task `outputs/`.
    - Verify with `file` and, when available, `pdfinfo`: PDF type, page count, size, encryption status.
    - Report both the source publisher record and the local PDF path.
-7. Hand off to paper note drafting.
+5. Hand off to paper note drafting.
    - If the user asked for notes too, invoke `paper-note-drafter` on `论文阅读/Inbox/xxx/xxx.pdf`.
    - If the user only asked for download/setup, stop after reporting the verified PDF.
 
@@ -117,7 +84,7 @@ If a paper exists in multiple sources, prefer the source explicitly requested by
 Report:
 
 - Paper title and publisher record URL.
-- Whether institutional access was observed.
+- Whether institutional access was observed, when applicable.
 - Any human intervention required, with the exact blocker.
 - Final `论文阅读/Inbox/xxx/xxx.pdf` path and verification result.
 - Suggested next step: pass the PDF to `paper-note-drafter` when note drafting is requested.

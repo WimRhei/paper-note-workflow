@@ -1,6 +1,6 @@
 ---
 name: paper-note-reader
-description: Continue reading and refining an existing Chinese paper note after the first draft, especially when the user asks what a passage means, wants concise explanations written back into xxx.md, compares xxx-naive.md with the edited note, or develops cross-paper/cross-domain insights from an Obsidian paper note.
+description: Continue reading and refining an existing Chinese Algorithm or Architecture paper note after the first draft. Use when the user asks what a passage means, wants a verified explanation written back into xxx.md, develops personal or cross-domain interpretations through discussion, or requests a routed diff review against xxx-naive.md.
 ---
 
 # Paper Note Reader
@@ -14,8 +14,15 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
 - Do not re-run PDF extraction or figure extraction unless the user explicitly needs missing evidence checked.
 - Do not edit `xxx-naive.md`; it is the baseline for later comparison.
 - Revise `xxx.md` directly when the user asks to write an explanation back into the note.
-- Keep edits surgical: rewrite the passage under discussion, add short parenthetical explanations, or add a compact final thought section.
-- Put cross-paper or cross-domain reflections in a separate note when they would distract from the paper's own logic.
+- Keep edits surgical: rewrite the passage under discussion or add short parenthetical explanations. Write personal interpretation into the note only when the user asks to preserve it.
+- During discussion, the model may develop architecture inspiration, optimization opportunities, applicability boundaries, cross-paper analogies, or other personal interpretations with the user. Do not write them into `xxx.md` unless the user asks.
+
+## Route Contract
+
+- Use the same two routes as `paper-note-drafter`: `Algorithm` or `Architecture`; co-design papers are `Architecture`.
+- Identify the existing note's route before route-sensitive revision or final diff review.
+- Read only the matching drafter schema/template when route context is needed. Do not load both routes.
+- Keep explanations of the paper source-supported for both routes. Personal understanding may also be developed interactively during `paper-note-reader` discussion.
 
 ## Reading Workflow
 
@@ -27,17 +34,15 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
 2. When the user asks what a passage means, answer in plain language first.
 3. If the user approves or asks to write it down, compress the explanation into the note.
 4. If the passage involves a figure/table, preserve the figure's role: what question it answers, key numbers, and the conclusion.
-5. If the discussion produces a transferable comparison, decide whether it belongs in:
-   - the paper note, if it explains this paper's contribution or limitation;
-   - a separate companion note, if it compares this paper to another area such as VLA, robotics, or architecture methodology.
+5. If the user asks to preserve a personal or cross-domain interpretation supplied by the user or developed during discussion, write it normally into `xxx.md` near the relevant passage. Do not create a separate note.
 
 ## What To Look At During Follow-Up Reading
 
 - Definitions that are easy to misread, such as Pareto frontier, cost-efficiency, prefix caching, QPS, LATS, or LLMCompiler.
-- Figures where the caption is not enough: identify the x/y axes, the changing variable, the key number, and the system implication.
+- Figures where the caption is not enough: identify the x/y axes, the changing variable, the key number, and the source-supported implication.
 - Claims that sound broad but are workload-specific.
 - Whether the paper is a method paper, a system paper, a characterization paper, or a survey; do not force the same note structure on all types.
-- Places where the user's domain analogy is useful but should not be mixed into the core paper summary.
+- Places where a domain analogy developed during discussion helps the user understand the paper.
 
 ## Writing Back Into Notes
 
@@ -46,39 +51,26 @@ Use this skill after `paper-note-drafter` has produced `Inbox/xxx/xxx-naive.md` 
 - Keep key numbers if they support the conclusion.
 - Remove filler such as "it supports the judgment that" when the result can be stated directly.
 - Do not add facts from memory if they are not in `xxx.md`, `xxx.txt`, the paper PDF, or the user's discussion.
+- Write personal understanding back only when the user explicitly asks to preserve it; it may be supplied by the user or developed during discussion.
 - If verification is needed, inspect `xxx.txt` or the PDF before writing.
-
-## Companion Notes
-
-Create a separate note under `Inbox/` when the user is building a reusable comparison that is not part of the original paper. Keep it short and question-driven.
-
-Recommended structure:
-
-```markdown
-# Topic
-
-## 1. Question
-
-- Short answer.
-
-## 2. Question
-
-- Short answer.
-```
 
 ## Final Diff Review
 
 When the user asks for final diff optimization:
 
-1. Compare `xxx-naive.md` and `xxx.md`.
-2. Separate changes into:
+1. Route the paper as `Algorithm` or `Architecture` using the drafter contract.
+2. Compare `xxx-naive.md` and `xxx.md`.
+3. Separate changes into:
    - expression cleanup;
    - conceptual clarification;
    - structural change;
-   - cross-domain insight;
+   - personal or cross-domain interpretation preserved from the discussion;
    - possible general lesson for `paper-note-drafter`.
-3. Do not update `paper-note-drafter` directly. If a lesson seems general, state the drafting problem, target file/section, and proposed rule, then wait for user confirmation.
-4. After confirmation, update the appropriate file in `paper-note-drafter`:
-   - workflow/process rules -> `SKILL.md`;
-   - writing judgment -> `references/paper-note-schema.md`;
-   - formatting/output contract -> `references/paper-note-template.md`.
+4. Do not update `paper-note-drafter` directly. If a lesson seems general, state the drafting problem, selected route, target file/section, and proposed rule, then wait for user confirmation.
+5. After confirmation, update only the file that owns that rule:
+   - workflow/process rules -> `../paper-note-drafter/SKILL.md`;
+   - Algorithm writing judgment -> `../paper-note-drafter/references/algorithm-paper-schema.md`;
+   - Algorithm note body structure -> `../paper-note-drafter/references/algorithm-paper-template.md`;
+   - Architecture writing judgment -> `../paper-note-drafter/references/architecture-paper-schema.md`;
+   - Architecture note body structure -> `../paper-note-drafter/references/architecture-paper-template.md`.
+6. Never modify the other route's schema/template from this diff review.

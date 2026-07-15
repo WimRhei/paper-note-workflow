@@ -2,10 +2,16 @@
 
 Use this route for IEEE Xplore documents or when the user explicitly asks for the IEEE copy.
 
+## Prerequisites
+
+- Use Google Chrome with the Codex Chrome browser-control extension/plugin installed and enabled.
+- Prefer a dedicated Chrome profile named `Papers-Codex` with publisher and institution sessions already prepared.
+- Before browser actions, read and follow the relevant Chrome control skill when it is available.
+- If Chrome control or the intended profile is unavailable, stop and ask the user to fix the browser setup instead of falling back to unauthenticated scraping.
+
 ## Boundary
 
 - Use Chrome for gated IEEE access; do not use shell `curl` for authenticated PDFs.
-- Prefer the `Papers-Codex` Chrome profile.
 - Do not read, reveal, store, or type passwords, OTPs, cookies, or session tokens.
 - Stop for CAPTCHA, QR login, OTP, missing password autofill, wrong saved credentials, or unexpected account prompts.
 
